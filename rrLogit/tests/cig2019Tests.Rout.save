@@ -1,0 +1,155 @@
+
+R version 4.2.1 (2022-06-23 ucrt) -- "Funny-Looking Kid"
+Copyright (C) 2022 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(rrLogit)
+> data(cig2019)
+> 
+> # get race/ethnicity variable, shorten the category names
+> # for better displays
+> y <- cig2019$hispallp_a
+> levels(y) <- c( "Hispanic", "NH White", "NH Black", "NH Asian",
++  "NH AIAN", "NH AIAN+", "Other" )
+> 
+> # display frequencies and percentages for the true response
+> yFreqTable <- data.frame( table(y) )
+> yFreqTable$Pct <- round( 100*table(y)/length(y), 2 )
+> yFreqTable
+         y  Freq   Pct
+1 Hispanic  4152 12.98
+2 NH White 21915 68.49
+3 NH Black  3483 10.89
+4 NH Asian  1648  5.15
+5  NH AIAN   212  0.66
+6 NH AIAN+   248  0.78
+7    Other   339  1.06
+> 
+> # perturbation matrix described by Wang, Wu and Hu (2016)
+> pertMat <- rrPertMat( privLoss=1.5, nLevels=7, method="WWH" )
+> round(pertMat, 4)
+       [,1]   [,2]   [,3]   [,4]   [,5]   [,6]   [,7]
+[1,] 0.4276 0.0954 0.0954 0.0954 0.0954 0.0954 0.0954
+[2,] 0.0954 0.4276 0.0954 0.0954 0.0954 0.0954 0.0954
+[3,] 0.0954 0.0954 0.4276 0.0954 0.0954 0.0954 0.0954
+[4,] 0.0954 0.0954 0.0954 0.4276 0.0954 0.0954 0.0954
+[5,] 0.0954 0.0954 0.0954 0.0954 0.4276 0.0954 0.0954
+[6,] 0.0954 0.0954 0.0954 0.0954 0.0954 0.4276 0.0954
+[7,] 0.0954 0.0954 0.0954 0.0954 0.0954 0.0954 0.4276
+> 
+> # infuse with noise
+> set.seed(721)
+> ystar <- rrPerturbResponse( y, pertMat )
+> 
+> # display frequencies and percentages for the noisy response
+> ystarFreqTable <- data.frame( table(ystar) )
+> ystarFreqTable$Pct <- round( 100*table(ystar)/length(ystar), 2 )
+> ystarFreqTable
+     ystar  Freq   Pct
+1 Hispanic  4494 14.05
+2 NH White 10430 32.60
+3 NH Black  4220 13.19
+4 NH Asian  3562 11.13
+5  NH AIAN  3052  9.54
+6 NH AIAN+  3126  9.77
+7    Other  3113  9.73
+> 
+> # method-of-moments estimates for true percentages
+> ystarFreqTable$MOM <- round( 100 * solve(pertMat) %*%
++    table(ystar)/length(ystar), 2 )
+> 
+> # ML estimates for true percentages
+> fit <- rrLogit(ystar ~ 1, pertMat=pertMat)
+Warning message:
+In rrLogit.formula(ystar ~ 1, pertMat = pertMat) :
+  Procedure failed to converge by iteration 1000
+> fit <- rrLogit(fit, method="NR")
+Estimate at or near boundary; standard errors may be unreliable
+> ystarFreqTable$ML <- round( 100 * as.vector(fitted(fit)), 2 )
+> 
+> # add prior information
+> fit <- rrLogit(ystar ~ 1, pertMat=pertMat,
++    prior="DAP", priorFreqTot=10, priorAlloc=rep(1/7,7) )
+>    
+> # put y and ystar into data frame, remove incomplete observations
+> metro <- cig2019$urbrrl
+> region <- cig2019$region
+> age <- cig2019$agep_a
+> catAge <- cut( age, breaks=c(18,25,35,45,55,65,75,85), include.lowest=TRUE)
+> sex <- cig2019$sex_a
+> dF <- data.frame(y, ystar, metro, region, catAge, sex)
+> # identify rows with missing values and eliminate them
+> incomplete <- apply( is.na(dF), 1, any )
+> dF <- dF[ ! incomplete, ]
+> # see how many rows are left
+> NROW(dF)
+[1] 31914
+> 
+> # fit some models
+> fitA <- rrLogit( ystar ~ catAge + sex,
++    pertMat=pertMat, data=dF,
++    prior="DAP", priorFreqTot=7, priorAlloc=rep(1/7,7) )
+> fitA <- rrLogit(fitA, method="NR")
+> round( coef(fitA), 5 )
+              Hispanic NH White NH Black NH Asian  NH AIAN NH AIAN+    Other
+(Intercept)          0  0.73241 -0.88928 -1.20989 -3.44082 -4.22831 -2.64936
+catAge(25,35]        0  0.40907  0.34393  0.16019  0.17584 -1.51481  0.75738
+catAge(35,45]        0  0.67856  0.22131  0.01458 -0.80964 -0.12479  0.41026
+catAge(45,55]        0  0.79395  0.59008  0.63664  1.49466  0.80028  1.17811
+catAge(55,65]        0  1.40109  0.60556 -0.97981  2.28496  0.60196 -0.07492
+catAge(65,75]        0  1.64997  0.74272  1.08520  0.98432  1.33417 -1.23203
+catAge(75,85]        0  2.40983  1.20987  0.89097  0.34502 -0.10533 -0.18197
+sexFemale            0 -0.10090  0.38091 -0.24347 -2.04644  2.10121 -0.71244
+> round( head( fitted(fitA) ), 6 )
+     Hispanic NH White NH Black NH Asian  NH AIAN NH AIAN+    Other
+[1,] 0.197680 0.559599 0.167706 0.054243 0.000976 0.005180 0.014618
+[2,] 0.072787 0.788325 0.062864 0.064254 0.006240 0.004029 0.001501
+[3,] 0.093316 0.787993 0.070265 0.010447 0.029375 0.002483 0.006121
+[4,] 0.037911 0.877845 0.052239 0.027559 0.001715 0.000497 0.002234
+[5,] 0.190359 0.596086 0.110339 0.066634 0.007271 0.000610 0.028701
+[6,] 0.075638 0.740577 0.095613 0.052342 0.000838 0.034228 0.000765
+> 
+> fitB <- rrLogit( ystar ~ catAge + sex + region,
++    pertMat=pertMat, data=dF,
++    prior="DAP", priorFreqTot=7, priorAlloc=rep(1/7,7) )
+Warning message:
+In rrLogit.formula(ystar ~ catAge + sex + region, pertMat = pertMat,  :
+  Procedure failed to converge by iteration 1000
+> fitB <- rrLogit(fitB, method="NR")
+> round( coef(fitB), 5 )
+              Hispanic NH White NH Black NH Asian  NH AIAN NH AIAN+    Other
+(Intercept)          0  1.16408 -1.05260 -0.59258 -5.20715 -3.77031 -2.99049
+catAge(25,35]        0  0.43932  0.48239 -0.08855  2.47329 -1.82675  0.17081
+catAge(35,45]        0  0.75502  0.30320  0.13016  3.76151 -0.79025 -0.38199
+catAge(45,55]        0  0.76663  0.75581  0.46174  2.74994  0.74193 -0.42093
+catAge(55,65]        0  1.34575  0.71398 -1.03251  2.68518 -0.04228 -1.82764
+catAge(65,75]        0  1.64523  0.90292  0.86730  0.99229  1.17714 -1.69362
+catAge(75,85]        0  2.33110  0.99591  1.22071  1.86706 -0.26756  0.61145
+sexFemale            0 -0.01282  0.48375 -0.05427  1.72051  1.74646 -0.54458
+regionMidwest        0  0.55048  0.40776 -0.21572 -2.26667  0.64329  2.05638
+regionSouth          0 -0.61094  0.53379 -1.22930 -3.01496  0.41796 -0.45753
+regionWest           0 -1.18375 -1.57125 -0.57353 -2.43572 -0.92287  1.31622
+> round( head( fitted(fitB) ), 6 )
+     Hispanic NH White NH Black NH Asian  NH AIAN NH AIAN+    Other
+[1,] 0.183829 0.489631 0.287532 0.025773 0.003273 0.005938 0.004024
+[2,] 0.083446 0.751876 0.122526 0.032125 0.000060 0.009478 0.000488
+[3,] 0.111183 0.742531 0.135145 0.006403 0.000438 0.003731 0.000569
+[4,] 0.047311 0.846394 0.076237 0.025935 0.000082 0.001267 0.002774
+[5,] 0.205902 0.555497 0.198538 0.030477 0.000656 0.001160 0.007769
+[6,] 0.075184 0.668799 0.179074 0.027415 0.000304 0.048969 0.000255
+> 
+> proc.time()
+   user  system elapsed 
+   2.54    0.10    2.67 

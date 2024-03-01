@@ -1,0 +1,3635 @@
+% SweaveUTF8
+% require xtable
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[12pt]{article}
+
+\usepackage{graphicx}
+\usepackage{charter}  % nicer font package
+\usepackage{booktabs}
+\usepackage[titletoc]{appendix}
+
+% set margins, etc
+\usepackage[text={6in,8.5in},footskip=.5in,centering,letterpaper]{geometry}
+\parskip = 6pt
+
+\usepackage{fancyhdr}
+% default page style
+\pagestyle{fancy}
+\fancyhead[L,C]{}
+\fancyhead[R]{\nouppercase{\textsc\leftmark}}
+\fancyfoot[R]{\thepage}
+\fancyfoot[c]{\small\textsf{Draft -- Pre-Decisional -- For Internal Use Only}}
+
+% plain page style for title page, front matter
+\fancypagestyle{plain}{%
+\fancyhf{} % clear all header and footer fields
+\fancyfoot[R]{\thepage}
+\fancyfoot[c]{\small\textsf{Draft -- Pre-Decisional -- For Internal Use Only}}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}}
+\addtolength{\headheight}{.1in}
+
+\usepackage{fancyvrb} % extended verbatim environments
+  \fvset{fontsize=\normalsize}% default font size for fancy-verbatim
+\usepackage{Sweave}
+\usepackage{amsmath}  % extended mathematics
+\usepackage{amssymb}  % extended mathematics
+
+% required for bibliography
+\usepackage{natbib}
+
+% custom math abbreviations for this document
+\newcommand{\I}{\mathrm{i}}
+\newcommand{\be}{\begin{equation}}
+\newcommand{\bea}{\begin{eqnarray}}
+\newcommand{\ee}{\end{equation}}
+\newcommand{\eea}{\end{eqnarray}}
+\newcommand{\nn}{\nonumber}
+\newcommand{\bX}{{\mbox{\boldmath $X$}}}
+\newcommand{\bx}{{\mbox{\boldmath $x$}}}
+\newcommand{\bY}{{\mbox{\boldmath $Y$}}}
+\newcommand{\by}{{\mbox{\boldmath $y$}}}
+\newcommand{\bZ}{{\mbox{\boldmath $Z$}}}
+\newcommand{\bz}{{\mbox{\boldmath $z$}}}
+\newcommand{\bT}{{\mbox{\boldmath $T$}}}
+\newcommand{\ba}{{\mbox{\boldmath $a$}}}
+\newcommand{\bb}{{\mbox{\boldmath $b$}}}
+\newcommand{\bA}{{\mbox{\boldmath $A$}}}
+\newcommand{\bB}{{\mbox{\boldmath $B$}}}
+\newcommand{\bC}{{\mbox{\boldmath $C$}}}
+\newcommand{\bc}{{\mbox{\boldmath $c$}}}
+\newcommand{\bD}{{\mbox{\boldmath $D$}}}
+\newcommand{\bE}{{\mbox{\boldmath $E$}}}
+\newcommand{\beff}{{\mbox{\boldmath $f$}}}
+\newcommand{\bF}{{\mbox{\boldmath $F$}}}
+\newcommand{\bd}{{\mbox{\boldmath $d$}}}
+\newcommand{\bH}{{\mbox{\boldmath $H$}}}
+\newcommand{\bG}{{\mbox{\boldmath $G$}}}
+\newcommand{\bL}{{\mbox{\boldmath $L$}}}
+\newcommand{\bM}{{\mbox{\boldmath $M$}}}
+\newcommand{\bN}{{\mbox{\boldmath $N$}}}
+\newcommand{\bI}{{\mbox{\boldmath $I$}}}
+\newcommand{\bP}{{\mbox{\boldmath $P$}}}
+\newcommand{\bQ}{{\mbox{\boldmath $Q$}}}
+\newcommand{\bR}{{\mbox{\boldmath $R$}}}
+\newcommand{\bS}{{\mbox{\boldmath $S$}}}
+\newcommand{\bU}{{\mbox{\boldmath $U$}}}
+\newcommand{\bu}{{\mbox{\boldmath $u$}}}
+\newcommand{\bV}{{\mbox{\boldmath $V$}}}
+\newcommand{\bv}{{\mbox{\boldmath $v$}}}
+\newcommand{\bvsub}{{\mbox{\boldmath\scriptsize $v$}}}
+\newcommand{\bVsub}{{\mbox{\boldmath\scriptsize $V$}}}
+\newcommand{\basub}{{\mbox{\boldmath\scriptsize $a$}}}
+\newcommand{\bbsub}{{\mbox{\boldmath\scriptsize $b$}}}
+\newcommand{\bcsub}{{\mbox{\boldmath\scriptsize $c$}}}
+\newcommand{\bW}{{\mbox{\boldmath $W$}}}
+\newcommand{\bK}{{\mbox{\boldmath $K$}}}
+\newcommand{\bp}{{\mbox{\boldmath $p$}}}
+\newcommand{\bn}{{\mbox{\boldmath $n$}}}
+\newcommand{\bo}{{\mbox{\boldmath $o$}}}
+\newcommand{\bzero}{{\mbox{\boldmath $0$}}}
+\newcommand{\bone}{{\mbox{\boldmath $1$}}}
+\newcommand{\bmu}{{\mbox{\boldmath $\mu$}}}
+\newcommand{\bnu}{{\mbox{\boldmath $\nu$}}}
+\newcommand{\bbeta}{{\mbox{\boldmath $\beta$}}}
+\newcommand{\bbetasub}{{\mbox{\boldmath\scriptsize $\beta$}}}
+\newcommand{\bBeta}{{\mbox{\boldmath $B$}}}
+\newcommand{\balpha}{{\mbox{\boldmath $\alpha$}}}
+\newcommand{\bgamma}{{\mbox{\boldmath $\gamma$}}}
+\newcommand{\bdelta}{{\mbox{\boldmath $\delta$}}}
+\newcommand{\bepsilon}{{\mbox{\boldmath $\epsilon$}}}
+\newcommand{\blambda}{{\mbox{\boldmath $\lambda$}}}
+\newcommand{\bomega}{{\mbox{\boldmath $\omega$}}}
+\newcommand{\bfeta}{{\mbox{\boldmath $\eta$}}}
+\newcommand{\btheta}{{\mbox{\boldmath $\theta$}}}
+\newcommand{\bTheta}{{\mbox{\boldmath $\Theta$}}}
+\newcommand{\bphi}{{\mbox{\boldmath $\phi$}}}
+\newcommand{\bPhi}{{\mbox{\boldmath $\Phi$}}}
+\newcommand{\bpsi}{{\mbox{\boldmath $\psi$}}}
+\newcommand{\bPsi}{{\mbox{\boldmath $\Psi$}}}
+\newcommand{\bxi}{{\mbox{\boldmath $\xi$}}}
+\newcommand{\bpi}{{\mbox{\boldmath $\pi$}}}
+\newcommand{\bSigma}{{\mbox{\boldmath $\Sigma$}}}
+\newcommand{\bGamma}{{\mbox{\boldmath $\Gamma$}}}
+\newcommand{\bLambda}{{\mbox{\boldmath $\Lambda$}}}
+\newcommand{\bOmega}{{\mbox{\boldmath $\Omega$}}}
+\newcommand{\bcomma}{{\mbox{\boldmath $,$}}}
+\newcommand{\bcommasub}{{\mbox{\boldmath\scriptsize $,$}}}
+\newcommand{\bcolon}{{\mbox{\boldmath $:$}}}
+\newcommand{\bcolonsub}{{\mbox{\boldmath\scriptsize $:$}}}
+\newcommand{\bplus}{{\mbox{\textbf{+}}}}
+% symbol for independence
+\newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}} 
+% absolute value and vector norm
+\newcommand{\abs}[1]{\lvert#1\rvert}
+\newcommand{\norm}[1]{\lVert#1\rVert}
+% argmin and argmax
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+% new description environment for documenting arguments
+% to R functions 
+\newenvironment{mydescription}
+{   \let\olddescriptionlabel=\descriptionlabel
+   \renewcommand{\descriptionlabel}[1]{
+      \hspace{\labelsep}\hspace{1em}\texttt{##1}\,\upshape{:}} 
+   \begin{description} }
+{  \end{description} 
+   \let\descriptionlabel=\olddescriptionlabel }
+
+% changes to the way R code is displayed in code chunks
+\SweaveOpts{keep.source=TRUE}
+\fvset{listparameters={\setlength{\topsep}{0pt}}}
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{
+  xleftmargin=2em,fontsize=\footnotesize,fontshape=sl}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{
+  xleftmargin=2em,fontsize=\scriptsize}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{
+  xleftmargin=2em,fontsize=\footnotesize,fontshape=sl}
+\renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+% Sweave graphics hook
+<<echo=FALSE>>=
+oldSweaveHooks <- options()$SweaveHooks # resets to this at end of vignette
+options(SweaveHooks=list(fig=function()
+par(mar=c(5.1, 4.1, 1.1, 2.1))))
+@
+
+% set width of R output
+<<echo=FALSE>>=
+oldWidth <- options()$width  # resets to this at the end of vignette
+options(width=90)
+@
+
+\title{\texttt{rrLogit}: Multinomial Logistic Regression with
+Randomized Response}
+\author{Joseph L. Schafer\thanks{Office of the Associate Director for
+    Research and Methodology, United States Census Bureau, Washington,
+    DC 20233, \texttt{joseph.l.schafer@census.gov}.  This article is
+    intended to inform interested parties of ongoing research and to
+    encourage discussion. Views expressed are those of the author and not
+    necessarily those of the U.S. Census Bureau.}}
+\date{\today}
+\maketitle
+
+\begin{abstract}
+\noindent The R package \texttt{rrLogit} provides
+tools for analyzing categorical variables that have been perturbed by
+the post-randomization method (PRAM) for statistical disclosure
+control. The primary function \texttt{rrLogit()} fits a
+baseline-category logistic model to predict the noisy variable from
+one or more non-noisy ones whose relationships to the noisy variable
+may be of interest. Using this predictive model, the user generates
+multiple imputations of the unseen true responses. Each version of the
+imputed data is analyzed in a standard fashion as if there were no added
+noise, and the results are combined using Rubin's rules for
+multiple-imputation inference to yield measures of uncertainty that
+account for the noise infusion.  Model-fitting procedures include
+mode-finding algorithms (EM, Newton-Raphson) and Bayesian posterior
+simulation by Markov chain Monte Carlo.  Additional methods are provided for
+extracting fitted values and residuals, assessing model fit, and
+generating posterior predictions. The package includes example
+datasets and simple utilities for noise infusion, which may be used by
+statistical agencies to explore potential uses of PRAM and the
+tradeoffs between data utility and privacy protection.
+\end{abstract}
+
+\noindent{\bf Keywords:} multiple imputation, post-randomization
+method, randomized response, response error, statistical disclosure
+limitation.
+\newpage
+
+\thispagestyle{plain}
+\noindent{\em This work was produced at the U.S. Census Bureau in the
+  course of official duties and, pursuant to Title 17 Section 105 of
+  the United States Code, is not subject to copyright protection
+  within the United States.  Therefore, there is no copyright to
+  assign or license and this work may be used, reproduced or
+  distributed within the United States.  This work may be modified
+  provided that any derivative works bear notice that they are derived
+  from it, and any modified versions bear some notice that they have
+  been modified, as required by Title 17, Section 403 of the United
+  States Code.  The U.S. Census Bureau may assert copyright
+  internationally.  To this end, this work may be reproduced and
+  disseminated outside of the United States, provided that the work
+  distributed or published internationally provide the notice:
+  ``International copyright, 2016, U.S. Census Bureau,
+  U.S. Government''.  The author and the Census Bureau assume no
+  responsibility whatsoever for the use of this work by other parties,
+  and makes no guarantees, expressed or implied, about its quality,
+  reliability, or any other characteristic.  The author and the Census
+  Bureau are not obligated to assist users or to fix reported problems
+  with this work.  For additional information, refer to GNU General
+  Public License Version 3 (GPLv3).}
+\newpage
+
+\tableofcontents
+
+\section{Introduction\label{sec:intro}}
+
+The R package \texttt{rrLogit} helps users to analyze categorical
+data that have been perturbed with random noise by the
+post-randomization method (PRAM). PRAM, a technique for statistical
+disclosure control developed by \cite{kooiman1997pram} and
+\cite{gouweleeuw1998post}, replaces some of the values of categorical
+variables in a microdata file with new values according to
+probabilistic mechanism implemented by a statistical agency before the
+data are released. PRAM is typically applied to key variables (e.g.,
+age, race or ethnicity) that could be used to identify individuals or
+units represented in the data file. Depending on the mechanism, PRAM
+may alter the statistical 
+properties of the data in three ways: (a) Distributions of key
+variables that have been PRAMed may look substantially different from
+their original versions. (b) Relationships between these key variables and
+other variables in the dataset may be distorted. (c) The additional
+noise added by PRAM, if not taken into account by the analyst, may
+cause levels of uncertainty to be understated; standard errors may be
+too small, and evidence against null hypotheses may appear too convincing.
+
+Functions in this package address concerns (a)--(c) at the same
+time. With \texttt{rrLogit}, a user fits models to the PRAMed dataset,
+supplying information on the probabilistic noise mechanism that was
+applied by the agency. Coefficients from a fitted model are
+consistent estimates of what we would see if we could apply the same
+model to the unPRAMed data in the full population, and standard errors
+from the fitted model account for both the ordinary sampling
+variability and the extra noise added by PRAM. When a suitable model
+has been determined, \texttt{rrLogit}  can generate multiple
+versions of the original, unaltered data within the framework of
+multiple imputation \citep{rubin1987multiple}. Each imputed
+dataset represents a plausible version of the unPRAMed sample, and
+the variation among them reflects the extra uncertainty introduced by PRAM.
+Analyzing each imputed dataset and combining the results with Rubin's
+rules for repeated-imputation inference produces estimates and
+measures of uncertainty for a wide variety of population quantities.
+
+\texttt{rrLogit} may also be applied to data on sensitive topics
+collected by randomized response (RR) \citep{warner1965randomized,
+chaudhuri2010randomized, blair2015design, chaudhuri2016data}. In RR,
+outcomes of coin flips or other random events are used to channel
+participants into different response options. For example, a woman may
+be instructed to roll a six-sided die.  If the result is 1, 2, 3, or
+4, she is to answer the question, ``Have you \emph{ever} had an
+abortion?'', but if the result is 5 or 6, she is to answer the
+opposite question, ``Have you \emph{never} had an abortion?'' Because
+only the participant observes the outcome of the roll, her true
+history remains hidden from the data collectors regardless of whether
+she answers ``Yes'' or ``No.''  In RR, unlike PRAM, the unperturbed
+response is unavailable to the agency, and the noise mechanism must be
+fully determined before data collection begins. From a data analyst's
+perspective, however, the two situations are virtually identical;
+techniques for analyzing PRAMed data may be applied seamlessly to
+RR.\footnote{The \texttt{rr} in \texttt{rrLogit} is a nod to the
+extensive literature on randomized response and to existing software
+packages developed for that context, all of whose names contain
+\texttt{rr} or \texttt{RR}.}
+
+PRAM and RR are also related to problems of misclassification or
+response error (RE) in surveys, censuses and administrative lists
+\citep{kuha1997categorical}. As with PRAM and RR, RE may distort the
+distribution of a categorical variable and its relationships to other
+variables. In typical RE scenarios, however, the error mechanisms are
+unknown and must be estimated, e.g.\ by linking to additional data
+sources or conducting validation studies to uncover true values
+for some units.  Examples of RE methodology for categorical variables
+are given by \cite{chen1979analysis}, \cite{chua1987model},
+\cite{greenland1988variance}, \cite{kuha1997categorical},
+\cite{magnac1999transition} and \cite{deWall2019quality}.  In general,
+valid inferences with RE will require that uncertainty about the error
+mechanism be taken into account.  The \texttt{rrLogit} package was not
+specifically designed for RE, because its functions presume the
+mechanism is known.  However, it may be possible to apply
+\texttt{rrLogit} to RE problems within Bayesian framework, repeatedly
+conditioning on simulated values of error-mechanism parameters drawn
+from a posterior distribution. For extended
+discussion on the similarities and differences among PRAM, RR and RE,
+see \cite{vandenhout2002randomized}.
+
+With this release of \texttt{rrLogit}, we focus on situations
+where a single key variable has been infused with noise.\footnote{This
+assumption is not as limiting as it may initially seem. If multiple
+variables have been PRAMed, we may recode them as a single variable
+whose categories consist of all possible combinations of the
+categories of the individual variables. We discuss this further in
+Section \ref{sec:multipleVariables}.}  We also suppose that there may
+be additional categorical or continuous covariates that do not have
+added noise, and whose relationships to the key variable may be of
+interest.  The main function in this package, \texttt{rrLogit()}, fits
+a multinomial logistic regression \citep{agresti2013categorical} to
+predict the key variable from the covariates. To fit this model, the
+user supplies the noisy key variable, the covariates, and a matrix of
+probabilities that describes the noise-infusion mechanism.  The
+default model-fitting method in \texttt{rrLogit()} is an
+expectation-maximization (EM) algorithm, a generalization of one
+previously described by several authors for the case where the key
+variable is binary \citep{van1999analysis, woo2012logistic,
+blair2015design}.  Supporting functions are provided for extracting
+fitted values, computing residuals, and comparing the fit of
+alternative models.  The \texttt{rrLogit()} function also implements
+Markov chain Monte Carlo (MCMC) procedures for simulating draws from a
+Bayesian posterior distribution for the model coefficients.  MCMC can
+also compute posterior predictions and generate multiple imputations
+of the unseen true key variable, which expands the range of possible
+analyses to situations where the key variable later assumes the role
+of a predictor for one or more covariates.
+
+\texttt{rrLogit} appears to be the first package
+specifically intended for analyzing data from PRAM. 
+Functions for handling variables perturbed by RR are found in the R
+packages \texttt{rr} \citep{blair2015rr}, \texttt{RRreg},
+\citep{heck2021RRreg}, \texttt{GLMMRR} \citep{fox2021GLMMRR} and the
+Stata module RRLOGIT \citep{jann2005RRLOGIT}. Those programs assume
+that the noise-infused variable is binary, but \texttt{rrLogit} allows
+an arbitrary number of response categories.
+
+Although \texttt{rrLogit} was designed primarily for
+data users, researchers at statistical agencies may also find it useful for
+exploring potential uses of PRAM and the assessing the impact of
+varying levels and patterns of noise on the utility of
+data products before they are released. To that
+end, \texttt{rrLogit} includes a simple utility for infusing
+categorical variables with noise using R's internal pseudorandom
+number generator. A more extensive toolkit for experimenting with PRAM
+and other methods of statistical disclosure control is provided by the
+R package \texttt{sdcMicro} \citep{templ2015statistical,
+templ2017statistical}.
+
+In Section 2 of this article, we introduce our notation and review
+some basic concepts of PRAM.  In Section 3, we describe multinomial
+logistic regression in the conventional setting where the categorical
+response variable does not have added noise. Readers who are already
+familiar with multinomial modeling may still find it helpful to skim
+that section to understand the basic features of the
+\texttt{rrLogit()} function, for example, how it expects input data to
+be provided. In Section 4, we begin to apply the function to
+noise-infused variables. Bayesian features of \texttt{rrLogit()} are
+described in Section 5, and topics related to multiple imputation are
+covered in Section 6.
+
+\section{Overview of the post-randomization method\label{sec:PRAM}}
+
+\subsection{PRAM in the context of statistical disclosure control}
+
+PRAM is one of many available techniques for statistical disclosure
+control (SDC), also known as statistical disclosure limitation or
+disclosure avoidance.  SDC reduces the chance that individuals or
+units represented in published data files and summary statistics can
+be pinpointed and linked to external information, even after direct
+identifiers (e.g., names, addresses, Social Security Numbers) have
+been removed. For overviews of SDC, see \cite{matthews2011data},
+\cite{duncan2011statistical}, \cite{willenborg2012elements}, and
+\cite{hundepool2012statistical}.
+In practice, an agency implementing SDC must strike a balance between
+data utility and disclosure risk 
+\citep{karr2006framework, cox2011risk}.
+Risk of disclosure can be described in many different ways; some measures
+specifically related to categorical microdata are described by
+\cite{skinner2002measure}, \cite{reiter2005estimating},
+\cite{shlomo2010assessing}, and \cite{zhang2021post}. 
+
+A major SDC paradigm that has been growing in popularity is
+differential privacy (DP) \citep{dwork2006differential,
+dwork2014algorithmic}. DP provides mathematically rigorous definitions
+of risk, strong privacy guarantees, and general-purpose prescriptions
+on how to achieve them by infusing data with random noise.  DP also
+allows the statistical agency releasing the data to be highly
+transparent, fully disclosing all details of the methodology (apart
+from the actual random numbers used) without incurring additional
+disclosure risk.  Notably, the U.S. Census Bureau adopted DP for data
+products published 
+from the 2020 Decennial Census \citep{abowd2018us,
+hawes2020implementing, abowd20222020}. DP implementations are either
+global or local. In global DP, the agency stores confidential data and
+releases tabulated summaries with noise added to the tabulations. In
+local DP, the agency stores a protected version of the microdata to
+which noise has already been added and releases portions or summaries
+of that database. RR and PRAM naturally align with local DP.
+Applications of PRAM to satisfy local DP criteria are discussed by
+\cite{WangEtAl:EDBT/ICDT2016}, \cite{ayed2020information}, and
+\cite{nayak2021review}.
+
+\subsection{The perturbation matrix}
+
+Consider a categorical variable $Y$ taking possible values
+$1,2,\ldots,C$. Suppose the distribution of $Y$ in the population is
+\[
+Y\,\sim\,\mbox{Categorical}(\bpi),
+\]
+where $\bpi=(\pi_1,\pi_2,\ldots,\pi_C)^\top$, $\pi_y\,=\,P(Y=y)$, and
+the superscript $^\top$ denotes transpose. (Throughout this document,
+vectors, matrices and arrays are displayed in boldface, scalars are
+shown in lightface, and where it matters, all vectors are taken to be
+columns.) With PRAM, the values of $Y$ in a dataset are kept confidential
+and withheld from data 
+users. Instead, the agency releases a perturbed version $Y^*$ that has been
+randomly generated from $Y$. The probabilistic relationship between
+$Y$ and $Y^*$ is described by the $C\times C$ perturbation matrix
+\[
+\bT \, =\,
+\left[ \begin{array}{cccc}
+t_{11} & t_{12} & \cdots & t_{1C} \\
+t_{21} & t_{22} & \cdots & t_{2C} \\
+\vdots & \vdots & \ddots & \vdots \\
+t_{C1} & t_{C2} & \cdots & t_{CC}
+\end{array}
+\right],
+\]
+where $t_{rs} \,=\,P(Y^*=r\,|\,Y=s)$. Note that the rows of this
+matrix refer to the levels of the noisy variable $Y^*$, and its
+columns refer to levels 
+of the underlying true variable $Y$.  As values on the diagonal of
+$\bT$ become smaller, amounts of perturbation become larger.
+We will assume that $\bT$ has full rank; if $\bT$ were singular, then
+it would not be possible to identify the distribution of $Y$
+from the distribution of $Y^*$. $\bT$ is guaranteed to have full
+rank if every element on the diagonal $t_{rr}$ is greater than $1/2$, a
+condition known as strict diagonal dominance (Horn and Johnson, 2013,
+p.\ 352).\nocite{horn2013matrix} That condition is not necessary,
+however, and many non-singular examples exist with smaller diagonal entries.
+
+In the literature on PRAM, $\bT$ has occasionally been called a
+transition matrix, because it resembles the transition probability
+matrix of a Markov chain.  It has also been called a distortion
+matrix. Depending on how the matrix is chosen, however, it may not
+actually distort the distribution of the variable; it is possible to
+have $Y^*\,\sim\,\mbox{Categorical}(\bpi)$ even when $\bT\,\neq\,\bI$
+($\bI$ denotes the identify matrix).  $\bT$ As long as
+$\bT\,\neq\,\bI$, $Y^*$ will sometimes differ from $Y$, and summaries
+computed from the perturbed data may not exactly reproduce those from
+the original data.
+
+PRAM was originally proposed
+by \cite{kooiman1997pram} and \cite{gouweleeuw1998post} who soon
+recognized its similarity to RR. In PRAM,
+perturbation is carried out on each unit or record in a dataset
+independently of all other records; if $Y_i$ and $Y_i^*$ denote the
+values of the true and noisy variables for
+individual $i$ in a sample of size $N$, then $Y^*_i$ is simulated from
+$Y_i$ 
+independently for $i=1,\ldots,N$.  This may create inconsistencies if the
+data file has a nested or hierarchical structure where units are
+grouped into clusters and certain logical relationships must be
+satisfied among the units within a cluster.  For example, persons may
+be nested within households, and no person within a household may have
+more than one spouse.  One possible solution to this problem is to
+redefine the variable to be PRAMed as an attribute of the cluster
+rather than the lower-level unit; for discussion on this point, see
+\cite{deWolf1998reflections}.
+
+\subsection{Moment estimators\label{sec:MOM}}
+
+From the law of total probability
+$P(Y^*=r) \,=\,\sum_{s=1}^C P(Y^*=r\,|\,Y=s)\,P(Y=s)$,
+it immediately follows that the distribution of the noisy variable is
+\[
+Y^*\,\sim\,\mbox{Categorical}(\bpi^*),
+\;\;\;\bpi^*\,=\,\bT\bpi.
+\]
+If $\beff^*\,=\,(f^*_1,f^*_2,\ldots,f^*_C)^\top$ denotes the tabulated
+frequencies of $Y^*=y$ for $y=1,\ldots, C$ 
+and $\hat{\bpi}^*\,=\,\beff^*/N$ denotes the sample
+proportions,\footnote{For this
+discussion, we assume simple random sampling with replacement, which implies
+that $\beff^* \, \sim \, \mbox{Multinomial}(N,\bpi^*)$. For complex
+sample designs, we may redefine $\hat{\bpi}^*$ as a vector of weighted
+proportions computed using the survey weights.}
+a simple method-of-moments (MOM) estimate for $\bpi$ is 
+\begin{equation}
+\tilde{\bpi}
+\,=\,
+\bT^{-1}\hat{\bpi}^*.
+\label{eq:pihatMOM}
+\end{equation}
+The MOM estimate is unbiased for $\bpi$, and an unbiased estimate of
+its covariance matrix is
+\begin{equation}
+\hat{V}(\tilde{\bpi})\,=\,
+\frac{1}{(N-1)}\;\bT^{-1}\,\left[\,
+\mbox{Diag}(\hat{\bpi}^*)\,-\,\hat{\bpi}^*(\hat{\bpi}^*)^\top\,\right]\,
+\left( \bT^{-1}\right)^\top.
+\label{eq:VhatMOM}
+\end{equation}
+The true covariance matrix for $\tilde{\bpi}$ can
+be decomposed as $V(\tilde{\bpi})\,=\,\bSigma_1\,+\,\bSigma_2$, where
+\begin{equation}
+\bSigma_1\,=\,\frac{1}{N}\,\left[
+\,\mbox{Diag}(\bpi)\,-\,\bpi\bpi^\top\,
+\right]
+\label{eq:SigmaTerm1}
+\end{equation}
+represents the
+variability due to sampling the true variable from its population, and
+\begin{equation}
+\bSigma_2\,=\,\frac{1}{N}\;\bT^{-1}\,\left[
+\,\mbox{Diag}(\bpi^*)\,-\,\bT\,\mbox{Diag}(\bpi)\,\bT^\top\,\right]\,
+\left( \bT^{-1}\right)^\top
+\label{eq:SigmaTerm2}
+\end{equation}
+represents the extra noise added by PRAM
+\citep{vandenhout2002randomized}.
+
+Although the MOM estimate is unbiased, it may sometimes stray outside
+the parameter space, producing negative estimated probabilities for
+one or more categories. This tends to happen more frequently when $N$
+is small, when some categories of $Y$ are rare, and when the amounts
+of added noise are high. Aside from that occasional glitch, it may work
+well enough to be an adequate solution if we only care about the
+marginal distribution of $Y$.  The problem, of course, is that we may
+also want to describe relationships between $Y$ and other
+variables. Formulas for some simple measures of association
+that correct for response error are available; for example, 
+\cite{greenland1988variance} gives an estimate and standard error for
+an odds ratio. For more complicated analyses, however,
+it is helpful to have a set of general-purpose strategies and
+computational tools to account for the noise that has been added to
+$Y^*$.
+
+\subsection{PRAM for multiple variables\label{sec:multipleVariables}}
+
+If we have two key variables, $Y_1$ and $Y_2$, with $C_1$
+and $C_2$ categories, respectively, we may compound
+them into a single variable $Y$ with categories $y=1,\ldots,C$ 
+representing the $C=C_1\times C_2$ possible combinations of $Y_1$ and $Y_2$.
+Suppose we order the categories of this compounded variable so that
+$Y_1$ varies more slowly,
+\begin{eqnarray}
+Y=1 & \Leftrightarrow & (Y_1=1, Y_2=1), \nn\\
+Y=2 & \Leftrightarrow & (Y_1=1, Y_2=2),\nn\\
+& \vdots & \nn\\
+Y=C-1 & \Leftrightarrow & (Y_1=C_1, Y_2=C_2-1), \nn\\
+Y=C & \Leftrightarrow & (Y_1=C_1, Y_2=C_2). \nn
+\end{eqnarray}
+If we independently apply PRAM to $Y_1$ and $Y_2$ using perturbation
+matrices $\bT^{(1)}$ and $\bT^{(2)}$, then
+\[
+P(Y^*_1=a,Y^*_2=b \,|\,Y_1=c, Y_2=d)\,=\,
+t^{(1)}_{ac}\,t^{(2)}_{bd},
+\]
+and the implied $C\times C$ perturbation matrix for $Y$ becomes
+\[
+\bT \,=\,
+\left[ \begin{array}{ccc}
+t^{(1)}_{11} \,\bT^{(2)} & t^{(1)}_{12} \,\bT^{(2)} & \cdots \\*[2pt]
+t^{(1)}_{21} \,\bT^{(2)} & t^{(1)}_{22} \,\bT^{(2)} & \cdots \\ 
+\vdots & \vdots & \ddots
+\end{array}\right]
+\,=\,
+\bT^{(1)} \otimes\,\bT^{(2)},
+\]
+where $\otimes$ denotes the Kronecker product. If $Y_1$ and $Y_2$ are
+not PRAMed independently, then $\bT$ loses this special
+structure, but we may still regard $Y^*$
+as a single PRAMed variable perturbed by $\bT$.
+
+The extension of this discussion to three or more variables is
+immediate. Without loss of generality, we may combine any number of
+PRAMed variables and apply \texttt{rrLogit} to the
+compounded variable $Y^*$. This approach does have
+drawbacks. In particular, the class of multinomial logistic models
+currently implemented in \texttt{rrLogit} would not take into
+account the cross-classified nature of $Y^*$. As
+the number of PRAMed variables grows, the total number categories $C$
+and the number of parameters needed to relate $Y^*$ to covariates
+would increase rapidly, leading to overfitted models and numerical
+instability. One possible solution to this problem would be to extend the
+model framework to allow constraints consistent with a multivariate
+response, as in the multinomial logistic models for multivariate
+categorical responses proposed by \cite{bock1975multivariate}. 
+
+\subsection{Choosing a perturbation matrix\label{sec:choosingT}}
+
+For users of a PRAMed dataset, $\bT$ has already been determined by
+the agency supplying the data. Before the data are released, however,
+researchers within the agency must select a $\bT$ that balances the
+needs of data users against the risks of unintentional disclosure.
+
+For any specific population, one can create a PRAMed variable that has
+the same distribution as its unPRAMed counterpart. That is, if
+$Y\,\sim\,\mbox{Categorical}(\bpi)$, it is possible
+to find non-identity perturbation matrices that lead to
+$Y^*\,\sim\,\mbox{Categorical}(\bpi^*)$ with $\bpi^*=\bpi$. Methods
+that have this property are called invariant PRAM. To compute a
+$\bT$ for invariant PRAM, we need an estimate of $\bpi$ based on
+the observed values of $Y$ in the sample.
+\cite{kooiman1997pram} and \cite{gouweleeuw1998post} suggested the
+following version.
+Let $Y_1,\ldots,Y_N$ denote observations of the unPRAMed variable
+in the dataset, and let $f_y \,=\,\sum_{i=1}^N I(Y_i=y)$ denote the
+observed frequency in category $y$.  Denote the
+smallest of these frequencies by $f_{\mbox{\scriptsize
+(min)}}\,=\,\mbox{min}(f_1,\ldots,f_C)$. Elements of the perturbation
+matrix are
+\[
+t_{rs}\,=\,
+\left\{
+\begin{array}{ll}
+1\,-\, ( \theta f_{\mbox{\scriptsize (min)}} / f_r ) & \mbox{if\, $r=s$},
+\\
+\theta f_{\mbox{\scriptsize (min)}} / ((C-1) f_c) & \mbox{otherwise},
+\end{array}
+\right.
+\]
+where $\theta\in (0,1)$ is a tuning parameter controlling the amount
+of noise. Additional methods for invariant PRAM are
+described by \cite{mares2014data}, \cite{nayak2018measuring}, and
+\cite{zhang2021post}.
+With invariant PRAM, tabulations of $Y^*$ computed by users will be
+close to those that would be obtained from 
+$Y$, but other statistical properties will still change;
+measures of uncertainty will be too small unless
+the added noise is taken into account, and
+relationships between the key variable and other variables will
+be attenuated. To preserve important relationships,
+invariant PRAM could be performed independently within subsets of the
+sample defined by covariates. In practice, however, this may lead to
+unacceptably high risk of disclosure as the number of subsets grows and
+the sample sizes within them shrink. Invariant PRAM may be attractive 
+when users are unwilling or unable to adjust their analyses for added
+noise. Mar{\'e}s and Shlomo (2014, Sec.\ 2) write: 
+\begin{quotation}
+\noindent\emph{Placing the condition of invariance on the transition
+matrix\ldots 
+releases the users of the protected file of the extra effort to obtain
+an unbiased estimate of the original data\dots This is an 
+important property to instill in the protected data since data
+providers will generally not release the transition matrix.}
+\end{quotation}
+However, if the statistical agency does
+publish $\bT$, and if tools for analysing PRAMed data are
+available to users, these
+arguments in favor of invariant PRAM become less convincing.
+
+Within the framework of differential privacy,
+\cite{WangEtAl:EDBT/ICDT2016} proposed a simple non-invariant method 
+that satisfies local DP conditions. Their perturbation
+matrix has equal values on the diagonal and off the diagonal,
+\begin{equation}
+\bT \,=\,
+\left[
+\begin{array}{cccc}
+p & \frac{1-p}{C-1} & \cdots & \frac{1-p}{C-1} \\*[4pt]
+\frac{1-p}{C-1} & p & \cdots & \frac{1-p}{C-1} \\
+\vdots & \vdots & \ddots & \vdots \\
+\frac{1-p}{C-1} & \frac{1-p}{C-1} & \cdots & p
+\end{array}
+\right] ,
+\label{eq:WangWuHuMatrix}
+\end{equation}
+with the value of $p$ set by
+\[
+p \,=\, \left[
+\,1 \, + \, (C-1)\,e^{-\epsilon}\, \right]^{-1},
+\]
+where $\epsilon\in (0,\infty)$ is a privacy-loss parameter. 
+More versions of $\bT$ consistent with DP are discussed by
+\cite{ayed2020information} and \cite{nayak2021review}, and some
+additional non-DP choices were proposed 
+by \cite{deWolf2004empirical} and \cite{domingo2001quantitative}.
+
+\section{Multinomial logistic regression without added
+noise\label{sec:multinomialLogit}}
+
+\noindent\emph{This section provides an overview of multinomial
+logistic regression in conventional situations where the true response
+is seen by the analyst. Readers who are already familiar with
+multinomial modeling should still review this section to learn
+the basic features of the} \texttt{rrLogit()} \emph{function.}
+
+\subsection{A simple example\label{sec:alligatorExample}}
+
+Baseline-category logistic regression extends the well known logistic
+model for binary responses to $C\geq 2$ outcome categories. Before
+applying this model to noise-infused data, we illustrate it on a small
+dataset published by \cite{agresti2013categorical} which has no
+added noise and no obvious connection to PRAM or RR.
+We chose this example only because it is compact and easy to understand. In
+Section \ref{sec:withNoise}, we will switch to much larger dataset
+taken from an actual survey.
+
+The data shown in Table \ref{tab:alligatorData} come from a study of
+the primary food choices of alligators in four Florida lakes.
+\begin{table}
+\caption{\label{tab:alligatorData}
+Frequency table for 219 alligators captured in Florida,
+classified by lake, sex, size, and primary food choice. Source:
+\cite{agresti2013categorical}}
+{\footnotesize
+\begin{center}
+\begin{tabular}{rcrrrrrr}
+\toprule
+\rule[-5pt]{0pt}{15pt}& & & \multicolumn{5}{c}{\emph{Primary Food Choice}}\\
+\cline{4-8}
+\rule[-2pt]{0pt}{16pt}{\emph{Lake}} & {\emph{Sex}} & {\emph{Size}} & 
+\multicolumn{1}{c}{Fish} &
+\multicolumn{1}{c}{Inv.} &
+\multicolumn{1}{c}{Rept.} &
+\multicolumn{1}{c}{Bird} &
+\multicolumn{1}{c}{Other}\\ \midrule
+\rule{0pt}{12pt}Hancock & M & small &
+ 7\hspace*{.5em} &  1\hspace*{.3em} & 0\hspace*{.6em} &
+0\hspace*{.6em} & 5\hspace*{.9em}\\
+& & large &
+ 4\hspace*{.5em} &  0\hspace*{.3em} & 0\hspace*{.6em} &
+1\hspace*{.6em} & 2\hspace*{.9em}\\
+& F & small &
+16\hspace*{.5em} &  3\hspace*{.3em} & 2\hspace*{.6em} &
+2\hspace*{.6em} & 3\hspace*{.9em}\\
+& & large &
+ 3\hspace*{.5em} &  0\hspace*{.3em} & 1\hspace*{.6em} &
+2\hspace*{.6em} & 3\hspace*{.9em}\\*[8pt]
+Oklawaha & M & small &
+ 2\hspace*{.5em} &  2\hspace*{.3em} & 0\hspace*{.6em} &
+0\hspace*{.6em} & 1\hspace*{.9em}\\
+& & large &
+13\hspace*{.5em} &  7\hspace*{.3em} & 6\hspace*{.6em} &
+0\hspace*{.6em} & 0\hspace*{.9em}\\
+& F & small &
+ 3\hspace*{.5em} &  9\hspace*{.3em} & 1\hspace*{.6em} &
+0\hspace*{.6em} & 2\hspace*{.9em}\\
+& & large &
+ 0\hspace*{.5em} &  1\hspace*{.3em} & 0\hspace*{.6em} &
+1\hspace*{.6em} & 0\hspace*{.9em}\\*[8pt]
+Trafford & M & small &
+ 3\hspace*{.5em} &  7\hspace*{.3em} & 1\hspace*{.6em} &
+0\hspace*{.6em} & 1\hspace*{.9em}\\
+& & large &
+ 8\hspace*{.5em} &  6\hspace*{.3em} & 6\hspace*{.6em} &
+3\hspace*{.6em} & 5\hspace*{.9em}\\
+& F & small &
+ 2\hspace*{.5em} &  4\hspace*{.3em} & 1\hspace*{.6em} &
+1\hspace*{.6em} & 4\hspace*{.9em}\\
+& & large &
+ 0\hspace*{.5em} &  1\hspace*{.3em} & 0\hspace*{.6em} &
+0\hspace*{.6em} & 0\hspace*{.9em}\\*[8pt]
+George & M & small &
+13\hspace*{.5em} & 10\hspace*{.3em} & 0\hspace*{.6em} &
+2\hspace*{.6em} & 2\hspace*{.9em}\\
+& & large &
+ 9\hspace*{.5em} &  0\hspace*{.3em} & 0\hspace*{.6em} &
+1\hspace*{.6em} & 2\hspace*{.9em}\\
+& F & small &
+ 3\hspace*{.5em} &  9\hspace*{.3em} & 1\hspace*{.6em} &
+0\hspace*{.6em} & 1\hspace*{.9em}\\
+\rule[-4pt]{0pt}{6pt}& & large &
+ 8\hspace*{.5em} &  1\hspace*{.3em} & 0\hspace*{.6em} &
+0\hspace*{.6em} & 1\hspace*{.9em}\\ \bottomrule
+\end{tabular}
+\end{center}}
+\end{table}
+Researchers classified the stomach contents of 219 captured alligators
+into five categories: Fish (the most common primary food choice),
+Invertebrate (snails, insects, crayfish, etc.), Reptile (turtles,
+alligators), Bird, and Other (amphibians, plants, household pets,
+stones, and other debris). The alligators were also classified by
+Lake, Sex and Size. We regard food choice as the outcome variable and
+Lake, Sex and Size as potential predictors.
+
+Denote the primary food choice for alligator $i$
+($i=1,\ldots,209$) by $Y_i$, 
+which we regard as
+\[
+Y_i\,\sim\,\mbox{Categorical}(\bpi_i),
+\]
+where $\bpi_i\,=\,(\pi_{i1},\pi_{i2},\pi_{i3},\pi_{i4},
+\pi_{i5})^\top$. In this notation, 
+$\pi_{i1}$ is the probability that the alligator primarily consumes
+fish; $\pi_{i2}$ is the probability that it primarily
+consumes invertebrates; and so on. The subscript $i$
+indicates that these probabilities may vary among alligators, and this
+variation may be at least partly explained by covariates.
+To relate $\bpi_i$ to the covariates, we first select
+one of the food-choice categories to serve as a baseline
+and define the log-odds of every other category versus that one. The
+choice of baseline does not affect the model fit;  if the
+baseline were changed, the meaning and values of the regression
+coefficients would change, but the estimated probabilities $\bpi_i$
+would remain the same. Selecting category 1
+(Fish) as the baseline, we suppose that
+\begin{eqnarray}
+\eta_{i2} & = & \log \left( \frac{\pi_{i2}}{\pi_{i1}} \right) \,=\,
+\bx_i^\top \!\bbeta_2,\nn\\*[2pt]
+\eta_{i3} & = & \log \left( \frac{\pi_{i3}}{\pi_{i1}} \right) \,=\,
+\bx_i^\top \!\bbeta_3,\nn\\*[2pt]
+\eta_{i4} & = & \log \left( \frac{\pi_{i4}}{\pi_{i1}} \right) \,=\,
+\bx_i^\top \!\bbeta_4,\nn\\*[2pt]
+\eta_{i5} & = & \log \left( \frac{\pi_{i5}}{\pi_{i1}} \right) \,=\,
+\bx_i^\top \!\bbeta_5,\nn
+\end{eqnarray}
+where $\bx_i = (x_{i1},\ldots,x_{ip})^\top$ is a $p\times 1$
+vector of known predictors describing alligator $i$, and
+$\bbeta_y=(\beta_{1y}, \ldots, \beta_{py})^\top$,
+$y=2,3,4,5$ are vectors of coefficients to be
+estimated. The first element of $\bx_i$ is
+1, and the remaining elements are
+dummy indicators or codes that characterize main effects for
+Lake, Sex, and Size and possibly interactions among them.
+
+More generally, if a response variable $Y_i$ has categories $y=1,\ldots,C$
+and we select $b$ as the baseline, the baseline-category logit model is
+\begin{equation}
+\eta_{iy}\,=\,
+\log \left( \frac{\pi_{iy}}{\pi_{ib}} \right) \,=\,
+\bx_i^\top \!\bbeta_y
+\label{eq:bcLogit}
+\end{equation}
+for $y=1,\ldots,C$. The coefficients for
+the baseline category, $\bbeta_b$, are constrained to be
+$\bzero=(0,\ldots,0)^\top$. The inverse transformation implied by
+(\ref{eq:bcLogit}) is
+\begin{equation}
+\pi_{iy}\,=\,
+\frac{\exp ( \bx_i^\top \bbeta_y )}{\sum_{y^\prime = 1}^C
+\exp( \bx_i^\top \bbeta_{y^\prime} )}.
+\label{eq:inverseLogit}
+\end{equation}
+Depending on the context, we may write
+the full set of coefficients as a $p\times C$ matrix
+\[
+\bBeta \,=\,\left[ \bbeta_1,\ldots,\bbeta_C\right],
+\]
+which includes the column of zeros, or we may remove the zeros and
+stack the remaining columns into a vector $\bbeta$ of length
+$D=p(C-1)$.
+
+\subsection{Data formats}
+
+\noindent{\bf Wide format.} Although our model is expressed in terms
+of the outcome $Y_i$ for a 
+single alligator, Table \ref{tab:alligatorData} does not display
+any individual $Y_i$ values. Rather, it groups alligators by covariate
+patterns. Each row of the table represents a different combination of
+Lake, Sex, and Size, and the frequencies for the response
+categories appear in different columns. This method of data
+storage is attractive
+when the number of distinct covariate patterns is small
+relative to the overall sample size. A wide-format version of the
+alligator dataset is included with \texttt{rrLogit} as a
+data frame called \texttt{alligatorWide}.
+<<>>=
+# attach the rrLogit library
+library(rrLogit)
+# display Agresti's allligator data in wide format
+alligatorWide
+@
+
+\noindent{\bf Narrow format with frequencies.} In narrow format, 
+each row  represents a
+group of units that are identical with respect to the covariates and the
+response. The response is a single categorical variable
+(a factor in R) appearing in its own column, and the
+frequencies are stored as a numeric variable in another column. The
+narrow-format version of the alligator dataset is called
+\texttt{alligatorNarrow}.
+<<>>=
+# display a few rows of alligator data in narrow format with frequencies
+head(alligatorNarrow)
+# display the total number of alligators
+sum(alligatorNarrow$Freq)
+@
+When using narrow format, you may omit lines with frequencies of zero,
+because these contribute nothing to the loglikelihood. Whether those
+lines are included or not, you will get the same results.
+
+\noindent{\bf Microdata.} With microdata,
+each row represents a single observational unit.  
+As with narrow format, the response is a factor appearing in its own column,
+but a frequency variable is not needed, because the frequency
+associated with each row is assumed to be one. This version of the
+dataset is called \texttt{alligatorMicro}.
+<<>>=
+# display a few rows of alligator data in micro format
+head(alligatorMicro)
+# display the total number of alligators
+NROW(alligatorMicro)
+@
+
+\noindent{\bf Survey weights.} In microdata format, you have the
+option of supplying a numeric variable containing survey 
+weights. Survey weights play a role similar to frequencies in the
+model-fitting process, but special procedures (e.g., linearization
+methods or refitting with
+replicate weights) must be applied
+afterward to compute standard errors that take into account the complex
+sample design \citep{lumley2010complex}. Those procedures have not yet
+been implemented in \texttt{rrLogit()}, but the current version does
+accept survey weights. If weights are supplied, they are automatically
+scaled to sum to the overall sample size. This scaling has no effect
+on parameter estimates.
+
+\subsection{Fitting a model}
+
+\noindent{\bf Model formula.} When calling the function
+\texttt{rrLogit()} to fit a new model, the 
+first argument must be a model formula. The formula takes a different form
+for data in wide format versus data in narrow or microdata formats.
+With wide-format data, the left-hand side of the model formula (the
+part before the \texttt{$\sim$}) should be a matrix of frequencies.
+In other words, the left-hand side should list the frequency
+variables for response categories $1,\ldots,C$, separated
+by commas and enclosed by \texttt{cbind()}. The right-hand side should
+list the predictors, separated by the 
+operators \texttt{+}, \texttt{*}, or \texttt{:} in the standard
+modeling notation for R developed by \cite{chambers1992statistical},
+and as described in the help pages \texttt{?formula} and
+\texttt{?lm}. For example, 
+suppose that there are $C=3$ response categories whose frequency
+variables are named \texttt{f1}, \texttt{f2} and \texttt{f3}. The
+model formula \texttt{cbind(f1,f2,f3) $\sim$ x1 + x2*x3} specifies a model
+with main effects for \texttt{x1}, \texttt{x2}, and \texttt{x3} and
+the \texttt{x2:x3} interaction. In the example below, we fit a model
+to \texttt{alligatorWide} with main effects for Lake, Sex, and Size.
+<<>>=
+# example in wide format
+fitA <- rrLogit( cbind(Fish, Inv, Rept, Bird, Other) ~ Lake + Sex + Size,
+   data=alligatorWide)
+@
+If the data are arranged in narrow format with frequencies, the model
+formula should have 
+the response variable on the left-hand side, and the variable
+containing the frequencies
+should be supplied through the argument \texttt{freq}.
+<<>>=
+# same model as before, but in narrow format with frequencies
+fitB <- rrLogit( Food ~ Lake + Sex + Size,
+   data=alligatorNarrow, freq=Freq)
+@
+For microdata, we again have the response variable on the left-hand
+side of the formula, but the argument \texttt{freq} is omitted.
+<<>>=
+# same model as before, but with microdata
+fitC <- rrLogit( Food ~ Lake + Sex + Size,
+   data=alligatorMicro)
+@
+
+\noindent{\bf Model matrix.} As with other regression procedures in R,
+the numeric predictor vectors $\bx_i$ are automatically generated from the
+right-hand side of model formula. A constant is included unless the
+formula contains \texttt{0} or \texttt{-1}.  Factor variables are automatically
+expressed as dummy codes, effect codes, etc.\ as determined by the
+\texttt{contrasts} attribute of each factor or by the global setting
+\texttt{options("contrasts")}. To see these numeric predictors, apply
+\texttt{model.matrix()} to the result from \texttt{rrLogit()}.
+<<>>=
+# display the model matrix from the wide-format model fit
+model.matrix(fitA)
+@
+The matrix returned by
+\texttt{model.matrix()} has one row of
+predictors $\bx_i^\top$ for each row of the input dataset.
+
+\noindent{\bf Choosing the baseline.}
+By default, \texttt{rrLogit()} uses the first response category (in
+this example, Fish) as the baseline. The 
+\texttt{baseline} argument allows you to select the baseline by
+providing an integer or a character string.
+For example, to change the baseline to Other,
+you could say \texttt{baseline=5} or \texttt{baseline="Other"}.
+
+\noindent{\bf Summarizing results.}
+A call to \texttt{rrLogit()} produces an object of class
+\texttt{"rrLogit"}, a special kind of list that holds summaries of the
+data and results from the model-fitting procedure. Components of
+this object may be examined directly, but users are strongly encouraged
+to extract information using \texttt{summary()} and other methods specifically
+provided for that purpose.
+<<>>=
+# display results from the wide-format fit
+summary(fitA, showCoef=TRUE)
+@
+The last part of the printed summary displays each of the estimated
+coefficients $\hat{\beta}_{jy}$ along with its standard error (SE),
+Wald $z$-statistic, and p-value for testing the null hypothesis 
+$\beta_{jy}=0$ against the two-sided alternative
+$\beta_{jy}\neq 0$. As the number of response categories and
+covariates grows, this section can become tediously long. 
+The \texttt{summary()} method has an optional argument \texttt{showCoef} that
+determines whether this table of coefficients is displayed, with
+the default setting \texttt{showCoef=FALSE}.
+To extract the coefficients as a $p\times C$ matrix without SEs or
+test statistics, use \texttt{coef()}. 
+<<>>=
+# extract the estimated coefficients as a matrix
+coef(fitA)
+# verify that the estimates are identical regardless of how the
+# input data were formatted
+all.equal( coef(fitA), coef(fitB) )
+all.equal( coef(fitA), coef(fitC) )
+@
+\texttt{coef()} can also be used to retrieve the full $D\times D$
+covariance matrix for the vectorized $\hat{\bbeta}$; see
+\texttt{?coef.rrLogit} for details. 
+
+\noindent{\bf Fitting procedure.} The \texttt{method} argument for
+\texttt{rrLogit()} allows you to select the fitting procedure. For
+computing maximum-likelihood estimates, the available methods are
+\texttt{"EM"} (expectation-maximization), \texttt{"NR"}
+(Newton-Raphson), and \texttt{"FS"} (Fisher scoring), with
+\texttt{"EM"} as the default.  Without noise infusion, these three
+algorithms are identical, so for this example it doesn't matter which
+one you choose. Details of the fitting procedure are given in 
+\ref{app:NewtonRaphson}.
+
+\noindent{\bf Interpreting coefficients.} Some of the estimated
+effects for Lake are large and highly significant.  Consider the
+coefficient for \texttt{LakeOklawaha} and \texttt{Response = Inv},
+with a value of $\mbox{2.694}\,\approx\,\mbox{2.7}$. Because the
+baseline category is Fish, this coefficient alters the log-odds of
+Invertebrates versus Fish. The model has dummy indicators for
+Oklawaha, Trafford, and George, but not for Hancock, so Hancock is the
+reference lake. Therefore, our model estimates that, as we move from
+Lake Hancock to Lake Oklawaha, the log-odds of an alligator choosing
+Invertebrates over Fish increases by 2.7. In terms of odds, moving
+from Hancock to Oklawaha multiplies the odds of Invertebrates versus
+Fish by $\exp(\mbox{2.7})\,\approx\,\mbox{15}$.  One of the effects
+for Size (\texttt{Response = Inv}) is large and significant, but all
+three effects for Sex are small and insignificant, which suggests that
+we may be able to remove Sex without harming the fit.
+
+\subsection{Fitted values, residuals, predictions}
+
+\noindent{\bf Grouping by covariate patterns.} Regardless of how the
+input data are formatted, \texttt{rrLogit()} processes the
+data prior to model fitting, grouping the lines of the data frame by
+their covariate patterns. Covariate patterns, which we index
+by $g=1,\ldots,G$, are the unique
+combinations of the values of the predictor variables appearing in the
+dataset. Units within a covariate pattern share the same covariate
+vector $\bx_i$ and the same vector of probabilities $\bpi_i$, so we
+will sometimes write these as $\bx_g$ and $\bpi_g$.
+The grouped data can be expressed as $(\bx_g,\beff_{\!g})$, 
+$g=1,\ldots,G$, where $\beff_g=(f_{g1},\ldots,f_{gC})^\top$, and
+$f_{gy}$ is the frequency of $Y_i=y$ within group $g$.
+Regarding the group totals $N_g=\sum_{y=1}^C f_{gy}$ as fixed, 
+$\beff_{\!g}$ has a multinomial distribution 
+\[
+\beff_{\!g} \, | \, \bpi_g \, \sim \,
+\mbox{Mult}(N_g,\bpi_g)
+\] 
+independently for $g=1,\ldots,G$. The automatic grouping by covariate
+patterns speeds up the model-fitting procedures quite dramatically,
+especially when all of the predictors are categorical. This grouping
+is also key to interpreting fitted values and residuals, which we
+discuss next.
+
+\noindent{\bf Fitted values.}  Applying \texttt{fitted()} to an
+\texttt{rrLogit} object returns a matrix of fitted values with rows
+corresponding to covariate patterns and columns corresponding to
+response categories.  Fitted values come in three flavors:
+\texttt{type="prob"} (the default), which gives fitted probabilities,
+\[
+\hat{\pi}_{gy}\,=\,\frac{\exp( \bx_{g}^\top \hat{\bbeta}_{y}) }
+{\sum_{y^\prime = 1}^{C}\exp( \bx_{g}^\top \hat{\bbeta}_{y^\prime}) },
+\]
+\texttt{type="link"}, which gives fitted logits,
+\[
+\hat{\eta}_{gy}\,=\,\bx_g^T \hat{\bbeta}_y ,
+\]
+and \texttt{type="mean"}, which gives estimated expected frequencies,
+\[
+\hat{\mu}_{gy}\,=\,N_g\,\hat{\pi}_{gy}.
+\]
+<<>>=
+# display fitted probabilities from model fit to wide data;
+# results from narrow data and microdata will be the same
+fitted(fitA)
+@
+Covariate patterns are listed in the
+order in which they first appear in the input data frame. It is often
+helpful to know the
+values of the predictor variables associated with the covariate
+patterns. For this purpose, \texttt{fitted()} has an argument
+\texttt{include.predvars} whose default value is
+\texttt{FALSE}. Calling \texttt{fitted()} with \texttt{fitted()} with
+\texttt{include.predvars=TRUE} returns a data frame that includes the
+predictor variables.
+<<>>=
+fitted(fitA, include.predvars=TRUE)
+@
+For information on how to map the covariate patterns to rows of
+the input data, see \texttt{?fitted.rrLogit}.
+
+\noindent{\bf Residuals.} By default, residuals() computes the Pearson
+residuals (\texttt{type="Pearson"}),
+\begin{equation}
+R_{gy}\,=\,
+\frac{f_{gy}\,-\,\hat{\mu}_{gy}}{\sqrt{\hat{\mu}_{gy}}}.
+\label{eq:pearsonRes}
+\end{equation}
+Selecting \texttt{type="response"} returns the raw differences
+$f_{gy}\,-\,\hat{\mu}_{gy}$. 
+If the fitted means are not too small, 
+Pearson residuals are roughly comparable to $N(0,1)$ variates, but
+they are not independent; in particular, residuals for different 
+responses within the same covariate pattern can be highly
+correlated.
+<<>>=
+# examine Pearson residuals,  including the predictor variables in the output
+residuals(fitA, include.predvars=TRUE)
+@
+Examining these residuals, we see one cell where the observed frequency
+is a bit higher than we would expect if the model were true
+($R_{8,4}\,=\,3.63$); residuals for all other cells look reasonable.
+
+\noindent{\bf Predictions.} Predicted values returned by
+\texttt{predict()} are similar to fitted values, except that they are
+computed for rows of a dataset rather than its unique covariate
+patterns. The optional argument \texttt{newdata} allows us to provide
+a new data
+frame where the function looks for predictor values. With this
+feature, we can predict for out-of-sample
+units that were not used in the model fitting, which is useful for
+cross-validation.
+<<>>=
+# fit model to microdata with alligators #101 and 102 removed, then 
+# use the fitted model to get predicted probabilities for those alligators
+fitFrame <- alligatorMicro[ -(101:102), ]
+predFrame <- alligatorMicro[ 101:102, ]
+fit <- rrLogit( Food ~ Lake + Sex + Size, data=fitFrame )
+predict( fit, newdata=predFrame )
+@
+If we specify \texttt{se.fit=TRUE}, then \texttt{predict()} computes
+standard errors by the delta method \citep{agresti2013categorical}, as
+described in \ref{app:NewtonRaphson}; in
+that case, the result is a named list with three components:
+\begin{mydescription}
+\item[fit] the matrix of fitted values,
+\item[se.fit] a matrix with same dimensions as \texttt{fit} containing
+standard errors, and
+\item[cov.fit.array] a three-dimensional array holding the
+estimated covariance matrices for the fitted values.
+\end{mydescription}
+The dimensions of \texttt{cov.fit.array} are \texttt{c(n,C,C)}, where
+\texttt{n} is the number of rows in the prediction frame (either the
+original data frame or \texttt{newdata}) and \texttt{C} is the number
+of response categories. Each covariance matrix is rank-deficient due
+to the constraint that the predicted probabilities for each unit must
+sum to one.
+<<>>=
+result <- predict( fit, newdata=predFrame, se.fit=TRUE )
+# display fitted probs for first alligator in predFrame
+result$fit[1,]
+# display standard errors for those fitted probs
+result$se.fit[1,]
+# display estimated covariance matrix for those fitted probs
+result$cov.fit.array[1,,]
+# show that the matrix is rank-deficient
+qr( result$cov.fit.array[1,,] )$rank
+@
+
+\noindent{\bf Interval estimates for predicted probabilities.}
+Using the delta method, inferences for predicted probabilities could be
+based on the large-sample approximation
+\[
+\hat{\pi}_{gy} \, \sim \, N\left(\,\pi_{gy},
+[\mbox{SE}(\hat{\pi}_{gy})]^2\,\right), 
+\]
+where $\mbox{SE}(\hat{\pi}_{gy})$ is the standard error from calling
+\texttt{predict()} with \texttt{se.fit=TRUE}. By this
+approximation, a $100(1-\alpha)$\% confidence interval for $\pi_{gy}$
+would be
+\[
+\hat{\pi}_{gy}\,\pm\,z_{1-\alpha/2}\,\mbox{SE}(\hat{\pi}_{gy}),
+\]
+where $z_p$ is the $p$th quantile of $N(0,1)$.
+Unfortunately, the normal approximation for $\hat{\pi}_{gy}$
+may be implausible when $\pi_{gy}$ is close to zero
+or one. We see ample evidence of this with alligator
+\#1, for whom the predicted probability of Bird is \texttt{0.0114}
+with a standard error of \texttt{0.0137}; the 95\% interval
+<<>>=
+piHat <- result$fit[1,4]
+piSE <- result$se.fit[1,4]
+piLower <- piHat - qnorm(.975) * piSE 
+piUpper <- piHat + qnorm(.975) * piSE 
+c(piLower, piUpper)
+@
+strays into the negative range. A better approach is to apply a
+monotonic transformation $\psi_{gy}\,=\,\psi(\,\pi_{gy}\,)$ that maps
+$(0,1)$ to the real line, compute a symmetric interval on the $\psi$
+scale as
+\begin{equation}
+\psi(\hat{\pi}_{gy})\,\pm\,z_{1-\alpha/2}\,\psi^\prime(\hat{\pi}_{gy})\,
+\mbox{SE}(\hat{\pi}_{gy}),
+\label{eq:intervalPsi}
+\end{equation}
+$\psi^\prime(\pi)\,=\,d\psi/d\pi$, and then translate the
+interval endpoints back to probabilities by the inverse
+transformation $\pi_{gy}\,=\,\psi^{-1}(\psi_{gy})$. Taking
+\begin{eqnarray}
+\psi(\pi) & = & \log \left( \frac{\pi}{1-\pi} \right), \nn\\*[2pt]
+\psi^\prime(\pi) & = & \frac{1}{\pi\,(1-\pi)},\nn\\*[2pt]
+\psi^{-1}(\psi) & = & \frac{\exp(\psi)}{1\,+\,\exp(\psi)}, \nn
+\end{eqnarray}
+the approximate 95\% interval no longer covers zero.
+<<>>=
+logit <- function(pi) log( pi / (1-pi) )
+logitDeriv <- function(pi) 1 / ( pi * (1-pi ) )
+logitInv <- function(psi) exp(psi) / ( 1 + exp(psi) )
+psiHat <- logit( piHat )
+psiLower <- psiHat - qnorm(.975) * logitDeriv( piHat ) * piSE
+psiUpper <- psiHat + qnorm(.975) * logitDeriv( piHat ) * piSE
+logitInv( c( psiLower, psiUpper ) )
+@
+
+\subsection{Assessing model fit\label{sec:modelFit}}
+
+\noindent{\bf Pearson goodness-of-fit test.} Squaring  the
+Pearson residuals and summing them over covariate patterns
+gives the Pearson goodness-of-fit statistic 
+\begin{equation}
+X^2\,=\,\sum_{g=1}^G\sum_{y=1}^C R_{gy}^2,
+\label{eq:pearsonX2}
+\end{equation}
+which measures the overall lack of fit. More
+specifically, it 
+compares the fit of the current model to that of a saturated
+model which estimates $\hat{\bpi}_g$ independently
+for each covariate pattern $g=1,\ldots,G$, with no
+restrictions other than $\sum_{y=1}^C \pi_{gy} = 1$.   If the
+current model holds, then 
+$X^2$ is asymptotically distributed as $\chi^2$, with degrees of
+freedom equal to the number of free parameters in the saturated model
+minus the number of free parameters in the current model. For this
+example, the saturated model has $C-1=4$ free parameters within
+each of the $G=16$ covariate patterns for a total of $64$ parameters.
+The current model has $C-1=4$
+vectors of non-zero coefficients, and each vector has length
+$p=6$, for a total of $24$ parameters. Therefore, the nominal degrees
+of freedom associated with this test are $64-24=40$.\footnote{The
+nominal degrees of freedom do not include any adjustments to account
+for estimates that fall on a boundary of the parameter space, as they
+do here for the alternative saturated model; we discuss this further in Section
+\ref{sec:boundaryProblems}.}
+<<>>=
+# compute the Pearson goodness-of-fit statistic and its approximate p-value 
+X2 <- sum( residuals(fitA)^2 )
+1 - pchisq(X2, 40)
+@
+The p-value suggests some lack of fit, but not enough to conclusively
+reject the current model. For this
+example, however, the p-value should not be taken seriously, because the
+fitted means $\hat{\mu}_{gy}$ are too small. A common
+rule-of-thumb is that the $\chi^2$ approximation works well if no more
+than 20\% of the fitted means are less than 5.0 and none are less than
+1.0 (Agresti, 2013, Sec.\ 3.2). 
+<<>>=
+# check the sizes of the fitted means to see if the chi-squared
+# approximation is reasonable according to Agresti's rule-of-thumb
+muhat <- fitted(fitA, type="mean")
+mean( muhat < 5 )
+mean( muhat < 1 )
+@
+In this case, 77\% fall below 5.0 and 42\% fall below 1.0, so we
+should not put much stock in the apparently poor fit. Rather, 
+we should focus on the model's predictors to see whether important
+interactions have been omitted or if any main effects could be dropped.
+
+\noindent{\bf Fitting a saturated model.} The Pearson goodness-of-fit
+test is asymptotically equivalent to 
+a likelihood-ratio test (LRT) that compares the current model to the
+saturated model. To fit the saturated model, use
+\texttt{saturated=TRUE}. Under this option,
+\texttt{rrLogit()} enumerates all of the distinct combinations 
+of predictors on the right-hand-side of the model formula that
+appear in the dataset with frequencies greater than zero,
+then it independently fits a multinomial model to each one.
+<<>>=
+# fit the saturated model to wide-format data with saturated=TRUE;
+# this option works in the same way for narrow format and microdata
+fitSat <- rrLogit( cbind(Fish, Inv, Rept, Bird, Other) ~ Lake + Sex + Size,
+   data=alligatorWide, saturated=TRUE)
+summary(fitSat)
+@
+Notice that the printed summary includes the message, ``Estimate at
+or near boundary,'' which we will explain shortly.
+The LRT statistic is twice the difference in the
+loglikelihoods achieved by the two model fits.
+To compute the LRT statistic, you can extract the loglikelihood
+values from the fitted model objects using \texttt{loglik()}.
+<<>>=
+# compute the LRT test statistic
+2 * ( loglik(fitSat) - loglik(fitA) )
+@
+Note the similarity between this value and the Pearson $X^2$. As with
+$X^2$,  the fitted means in this example are not
+large enough for the LRT's p-value to be trustworthy.
+With a saturated model, the fitted means under the ML solution are
+equal to the corresponding 
+response frequencies, so the residuals are exactly zero.
+<<>>=
+residuals(fitSat)
+@
+If you try to extract the coefficients from a model fit with
+\texttt{saturated="TRUE"}, you won't find any.
+<<>>=
+coef(fitSat)
+@
+When \texttt{saturated="TRUE"},
+the estimated probabilities are computed directly from the frequencies
+using $\hat{\bpi}_g\,=\,\beff_g/N_g$;
+no model matrix is applied
+during the model fit, so the coefficients are not defined.
+
+\noindent{\bf Comparing nested models.}
+An easier way to perform the LRT is to compare fitted model
+objects with \texttt{anova()}. The default setting
+\texttt{method="lrt"} 
+automatically computes the LRT statistic and its
+degrees of freedom (df). With the argument \texttt{pval=TRUE}, it also
+displays a p-value based on the $\chi^2$ approximation. 
+<<>>=
+anova( fitA, fitSat, pval=TRUE )
+@
+The LRT is appropriate for comparing models that are nested in the
+sense that the smaller model is a special case of the larger.
+Any model fit with \texttt{saturated=FALSE} is nested
+within the version fit with \texttt{saturated=TRUE}. If models $M_1$
+and $M_2$ are both fit with \texttt{saturated=FALSE}, then $M_1$ is
+nested 
+within $M_2$ if every term in $M_1$ also appears in $M_2$. If
+\texttt{anova()} is applied to a sequence of nested models, the
+smallest model should 
+be listed first. This function does not automatically check the models
+to see whether they are nested, so when using \texttt{method="lrt"},
+it is up to the user to make sure that they are. 
+In the example below,
+we assess a sequence of nested models starting with no
+predictors and ending with the saturated model.
+<<>>=
+M1 <- rrLogit( Food ~ 1, data=alligatorMicro )
+M2 <- rrLogit( Food ~ Lake, data=alligatorMicro )
+M3 <- rrLogit( Food ~ Lake + Size, data=alligatorMicro )
+M4 <- rrLogit( Food ~ Lake + Size + Sex, data=alligatorMicro )
+M5 <- rrLogit( Food ~ Lake + Size + Sex, data=alligatorMicro, saturated=TRUE )
+anova( M1, M2, M3, M4, M5, pval=TRUE )
+@
+As we discussed earlier, the p-value for the comparison between models
+\texttt{M4} and \texttt{M5} may not be trustworthy, because the estimated
+expected means are too small. The p-values for the other model
+comparisons may be more reasonable, because for any fixed sample size,
+the $\chi^2$ approximation works better for tests with
+smaller df. Based on these results, there is little reason to keep
+\texttt{Sex} in the model.
+
+\noindent{\bf Comparing non-nested models.} For non-nested model
+comparisons, \texttt{anova()} implements the Akaike
+information criteron (\texttt{method="AIC"}) and Bayesian
+information criterion (\texttt{method="BIC"}), which include
+penalty functions to discourage the inclusion of unnecessary
+predictors. Smaller values of these criteria correspond to better
+models. With \texttt{showRank=TRUE}, the models are
+ranked from best to worst.
+<<>>=
+# model with no predictors
+M1 <- rrLogit( Food ~ 1, data=alligatorMicro )
+# models with one main effect
+M2 <- rrLogit( Food ~ Lake, data=alligatorMicro )
+M3 <- rrLogit( Food ~ Sex, data=alligatorMicro )
+M4 <- rrLogit( Food ~ Size, data=alligatorMicro )
+# models with two main effects
+M5 <- rrLogit( Food ~ Lake + Sex, data=alligatorMicro )
+M6 <- rrLogit( Food ~ Lake + Size, data=alligatorMicro )
+M7 <- rrLogit( Food ~ Sex + Size, data=alligatorMicro )
+# model with three main effects
+M8 <- rrLogit( Food ~ Lake + Sex + Size, data=alligatorMicro )
+# compare and rank these models using AIC
+anova( M1, M2, M3, M4, M5, M6, M7, M8, method="AIC", showRank=TRUE )
+@
+
+\subsection{Boundary problems and numerical
+exceptions\label{sec:boundaryProblems}}
+
+\noindent{\bf Estimate at or near boundary.}
+Recall that when we fit the model with \texttt{saturated=TRUE}, we saw
+this message in the printed summary:
+\begin{Schunk}
+\begin{Soutput}
+Estimate at or near boundary
+\end{Soutput}
+\end{Schunk}
+``Boundary'' refers to outer limits of the parameter space. For a
+saturated model, the parameter space is the set of
+probability vectors 
+$\bpi_g=(\pi_{g1},\ldots,\pi_{gC})^\top$, $g=1,\ldots,G$ satisfying 
+$\pi_{gy}\geq 0$ and $\sum_{y=1}^C \pi_{gy}=1$, and we fall on a
+boundary if one or more of the estimated $\hat{\pi}_{gy}$'s 
+is zero. The loglikelihood function for this model,
+\begin{equation}
+l\,=\,
+\sum_{g=1}^G \sum_{y=1}^C f_{gy}\,\log \pi_{gy},
+\label{eq:loglik}
+\end{equation}
+is defined at the boundary, provided that we regard $0\,\log
+0$ as $0$ and do not observe any impossible events where 
+$\pi_{gy}=0$ but $f_{gy}>0$. For a saturated model, the ML estimate
+will fall on a boundary whenever a frequency of zero appears in
+a non-empty covariate pattern.\footnote{If a covariate pattern appears
+in the dataset but the
+frequencies for response categories $1,\ldots,C$ are all 
+zero, the pattern is considered empty and excluded from
+the model when \texttt{saturated=TRUE}.}
+
+When \texttt{saturated=FALSE}, however, the issues are more
+subtle.  From the perspective of $\bbeta$, the parameter space is
+$\mathbb{R}^d$ with $d=p(C-1)$, which has no boundaries.
+However, if individual coefficients become large in magnitude,
+some of the $\pi_{gy}$'s become indistinguishable from zero.
+So even though the $\bbeta$-space is
+unbounded, with respect to the $\pi_{gy}$'s we may be at
+or near a boundary. For example, see what happens when we fit a model
+with \texttt{Lake:Size} interactions.
+<<>>=
+M <-  rrLogit( Food ~ Lake + Size + Lake:Size, data=alligatorMicro )
+@
+\vspace*{-18pt}
+\begin{Schunk}
+\begin{Soutput}
+Estimate at or near boundary; standard errors may be unreliable
+\end{Soutput}
+\end{Schunk}
+The Newton-Raphson algorithm is deemed to have converged if the
+largest observed change in any of the estimated $\pi_{gy}$'s from one
+iteration to the next falls below a threshold.\footnote{This threshold
+is a control parameter named \texttt{critConverge}, has a default
+value of $10^{-8}$. For information on how to change this value, see
+\texttt{?rrLogit} and \texttt{?rrLogitControl}.} In this example, the
+procedure did converge, but the final value of or more of the fitted
+$\pi_{gy}$'s was very small. When this happens, the Hessian matrix
+containing second derivatives of the loglikelihood may be nearly
+singular, making the SEs unstable. A quick glance at the table of
+coefficients shows that some of the estimated interactions are
+unusually large and their SEs are enormous.
+<<>>=
+# display a portion the table of coefficients with SEs
+summary(M)$coefficients[,,2:3]
+@
+This dataset provides too little information
+to get stable estimates for some \texttt{Lake:Size} interactions. However, the
+model's predictions exhibit the opposite problem; some appear to have too
+much precision.
+<<>>=
+# show predicted probs and their SEs for alligator #219, rounded to
+# four decimal places
+result <- predict(M, se.fit=TRUE)
+round( result$fit[219,], 4 )
+round( result$se.fit[219,], 4 )
+alligatorMicro[219,]
+@
+This model claims it's virtually
+impossible for an alligator like \#219, a
+large specimen from Lake George, to primarily consume Reptiles. This 
+demonstrates a fundamental
+problem with ML: the loglikelihood may rise
+sharply near a boundary, creating an illusion of high precision where
+there should be substantial uncertainty.
+
+\noindent{\bf Numerical exceptions and aborted procedures.}
+Boundary estimates are likely with sparse data where many of
+the $f_{gy}$'s are zero. They can also happen if just one 
+frequency is zero, if that zero falls in a covariate pattern that
+gets singled out by a predictor or by a linear combination of
+predictors. These conditions are known as complete separation or
+quasi-complete separation \citep{albert1984existence,
+lesaffre1989partial}.
+In these situations, coefficients and
+SEs may become large as the estimate approaches a boundary. In some cases,
+the fitting procedure may abort because of a numerical exception such
+as attempted division by zero, logarithm of a non-positive number, or
+square root of a negative number. Numerical exceptions often occur
+when a Hessian (second derivative) matrix is being factored or
+inverted. For example, see what happens when we
+try to include all two- and three-way interactions.\footnote{In this
+example, the model with terms \texttt{Lake*Sex*Size} happens to be
+equivalent to the saturated model that we fit earlier with
+\texttt{saturated=TRUE}, because all possible combinations of 
+of \texttt{Lake}, \texttt{Sex} and \texttt{Size} are represented in
+the dataset. With \texttt{saturated=TRUE}, we didn't encounter any
+problems, because under that option the ML procedure does
+not attempt to compute or invert the Hessian.}
+<<>>=
+M <-  rrLogit( Food ~ Lake*Sex*Size, data=alligatorMicro )
+@
+\vspace*{-16pt}
+\begin{Schunk}
+\begin{Soutput}
+Warning message:
+In rrLogit.formula(Food ~ Lake * Sex * Size, data = alligatorMicro) :
+  Procedure failed to converge by iteration 14
+\end{Soutput}
+\end{Schunk}
+Coefficients in logistic models represent log-odds ratios. A single
+zero frequency can produce an odds ratio of $0/x$ or $x/0$, sending
+the estimated coefficient toward $-\infty$ or $+\infty$. Multiple zero
+frequencies may lead to odds ratios of $0/0$, which are
+uninformative. When the 
+fitting procedure reports a numerical exception and aborts before it
+has converged, it means that one or more
+odds ratios were veering sharply toward $0/x$, $x/0$, or
+$0/0$ before the fitted probabilities stabilized.
+
+\noindent{\bf Boundary estimates and model comparisons.} When
+zero frequencies send ML estimates to a 
+boundary, some of the Pearson residuals are
+undefined, and we cannot compute the Pearson goodness-of-fit statistic
+(\ref{eq:pearsonX2}). If we compare the loglikelihoods of nested
+models by their loglikelihood values, and if one or both of the ML
+solutions lies on a boundary, the degrees of freedom calculated in the
+usual way can be misleading. The nominal degrees of freedom is the
+number of parameters that we are attempting to estimate under one
+model, minus the the number that we are attempting to estimate under
+the other model. The problem is that 
+some of parameters that we
+are attempting to estimate may not actually be estimable from the
+given data, as when an odds ratio becomes $0/0$. A traditional way to
+handle this is to set aside the cells with fitted values of zero and
+adjust for parameters that cannot be estimated
+\citep{bishop1975discrete, clogg1991multiple}. Rules for making these
+adjustments are complicated and difficult to implement, and
+the \texttt{anova()} method does not attempt to adjust degrees of freedom
+for estimates on a boundary.
+
+\noindent{\bf Possible remedies.} Problems due to zero frequencies can
+sometimes be fixed by removing unnecessary predictors. For this
+alligator dataset, 
+avoiding models with two- and three-way interactions seems
+reasonable. Removing predictors is not a panacea, however, and it
+may lead us to unwittingly discard variables because their associations
+with the outcome are \emph{too strong}. Imagine a world where female
+alligators never eat fish; any model that includes \texttt{Sex} would
+produce ML estimates on a boundary, but models without \texttt{Sex} would
+fail to describe this important phenomenon.  As an alternative to
+removing predictors, \texttt{rrLogit()} allows you to smooth estimates
+away from the boundary by applying an informative prior distribution.
+
+\subsection{Prior distributions\label{sec:DAP}}
+
+\noindent{\bf Data-augmentation prior (DAP).}
+To address problems associated with zero frequencies,
+\cite{clogg1991multiple} suggest maximizing the objective function
+\begin{equation}
+\log P \,=\, l \,+\,\sum_{g=1}^G \sum_{y=1}^C f^\dag_{gy} \,\log \pi_{gy} ,
+\label{eq:logP}
+\end{equation}
+where $l$ is the loglikelihood (\ref{eq:loglik}) and
+$f^\dag_{gy}$ is a small positive constant applied to response
+category $y$ in
+covariate pattern $g$. These constants, which are not necessarily integers, 
+play the role of imaginary prior
+observations added to the observed frequencies. The extra term $\sum_g\sum_y
+f^\dag_{gy} \,\log \pi_{gy}$ can be 
+regarded either as a penalty function that penalizes estimates for
+getting too close to a boundary, or as a log-prior density for
+$\bbeta$. Under the latter interpretation, the maximizer of
+(\ref{eq:logP}) becomes a posterior mode. A prior distribution with
+this form, called a data-augmentation prior (DAP) by \cite{bedrick1996new},
+has certain advantages over the more traditional priors that are
+formulated as densities for $\bbeta$. DAP's can be easier to interpret, and
+they do not complicate
+the model fitting procedure; an algorithm for ML
+estimation can maximize (\ref{eq:logP}) if we simply replace each $f_{gy}$
+with the augmented frequency $f_{gy}\,+\,f^\dag_{gy}$.
+
+\noindent{\bf Choosing prior frequencies.}  Let
+$N^\dag_{g}\,=\,\sum_{y=1}^C f^\dag_{gy}$ denote the total
+number of imaginary prior observations 
+added to covariate pattern $g$, and let
+$N^\dag\,=\,\sum_{g=1}^G N^\dag_g$ denote the total prior sample
+size. As recommended by \cite{clogg1991multiple}, we divide this total 
+equally among covariate patterns, taking $N^\dag_g\,=\,N^\dag /
+G$ for $g=1,\ldots,G$, and
+then allocate each $N^\dag_g$ to the response categories according to
+$f^\dag_{gy}\,=\,N^\dag_g\tilde{\pi}_{y}$, where
+$\tilde{\pi}_y$ is a prior guess of the marginal
+probability $P(Y=y)$.
+
+To apply the data-augmentation prior,
+call \texttt{rrLogit()} with \texttt{prior="DAP"}. 
+The default is \texttt{prior="none"}, which sets all
+imaginary prior frequencies to zero. When \texttt{prior="DAP"}, the
+prior frequencies
+are determined by two additional arguments,
+\begin{mydescription}
+\item[priorFreqTot] the overall prior sample size $N^\dag$, and
+\item[priorAlloc] a numeric vector holding the prior proportions
+$\tilde{\pi}_1,\ldots,\tilde{\pi}_C$.
+\end{mydescription}
+If these are not provided, we follow the suggestions of
+\cite{clogg1991multiple} and take $N^\dag\,=\,p(C-1)$, the total
+number of coefficients being estimated, and 
+$\tilde{\pi}_y\,=\,\sum_g f_{gy} / \sum_g N_g$, the observed
+proportion of $Y=y$ in the sample.
+
+As a demonstration, recall what happened when 
+we tried to estimate \texttt{Lake:Size} interactions.
+<<>>=
+fitML <-  rrLogit( Food ~ Lake*Size, data=alligatorMicro )
+@
+\vspace*{-18pt}
+\begin{Schunk}
+\begin{Soutput}
+Estimate at or near boundary; standard errors may be unreliable
+\end{Soutput}
+\end{Schunk}
+Now let's refit the model with \texttt{prior="DAP"}.
+<<>>=
+# apply a DAP with default settings
+fitDAP <-  rrLogit( Food ~ Lake*Size, data=alligatorMicro, prior="DAP" )
+@
+With this prior, the boundary message has disappeared, because
+the smallest fitted probabilities have been pulled away from zero.
+The estimated coefficients and SEs have also stabilized.
+<<>>=
+# show some of the estimated coefficients and SEs without the prior
+summary(fitML)$coefficients[,,2,drop=FALSE]
+# now show them with the prior
+summary(fitDAP)$coefficients[,,2,drop=FALSE]
+@
+
+\noindent{\bf Adjusting the strength of the prior.}  When using a
+prior distribution to stabilize a model, the prior ought to be strong
+enough to achieve the desired objective, but not so strong that it
+exerts undue influence and prevents the data from speaking for
+themselves. Basic information about the prior can be viewed with
+\texttt{summary()}. 
+<<>>=
+summary(fitDAP)
+@
+This DAP added the equivalent of $N^\dag\,=\,32$ imaginary
+observations, which is about $15$\% of the actual
+sample size $N\,=\,219$. We cannot offer any general rule to
+determine when $N^\dag/N$ has become too large, but we do recommend
+examining the loglikehood function to see how much it drops when we
+apply the prior.
+<<>>=
+# difference in loglikelihoods, ML minus posterior mode
+loglik( fitML ) - loglik( fitDAP )
+@
+Exponentiating this difference gives us a quantity known as a Bayes factor.
+<<>>=
+# Bayes factor comparing the ML estimate to the posterior mode
+exp( loglik( fitML ) - loglik( fitDAP ) )
+@
+This Bayes factor, the likelihood at the ML estimate
+divided by the likelihood at the posterior mode, summarizes the
+data's evidence about the relative plausibility of these two
+estimates. Using rules-of-thumb for interpreting Bayes factors
+given by \cite{jeffreys1961theory} and \cite{kass1995bayes}, 
+a value between $1.0$ and $\sqrt{10}\,\approx\,3.2$ means that
+the evidence for preferring the ML estimate to the posterior mode is
+weak and ``not worth more than a bare mention''; a value between $3.2$
+and $10$ means that the evidence is ``substantial''; and a value
+greater than $10$ is ``strong.'' These guidelines
+suggest that for this example, the default version of
+\texttt{prior="DAP"} might be too aggressive.
+To weaken the prior, reduce the
+value of \texttt{priorFreqTot}. Note that
+\texttt{priorFreqTot} doesn't have to be an integer.
+<<>>=
+# set priorFreqTot to 2.19, which corresponds to one percent
+# of the sample size
+fitDAP <-  rrLogit( Food ~ Lake*Size, data=alligatorMicro,
+   prior="DAP", priorFreqTot=2.19 )
+@
+Under this weaker prior, the coefficients and SEs are still stable,
+<<>>=
+summary(fitDAP)$coefficients[,,2,drop=FALSE]
+@
+and the Bayes factor shows that there is almost no evidence whatsoever
+to prefer the ML solution to this new result. 
+<<>>=
+# Bayes factor comparing the ML estimate to the new posterior mode
+exp( loglik( fitML ) - loglik( fitDAP ) )
+@
+When applying a DAP, it is good practice to  try to keep the Bayes
+factor small. This is not always possible, especially with larger
+datasets. If a model is not unnecessarily complicated, and the
+mildest prior that stabilizes the fit produces a Bayes factor greater
+than $3.2$, the prior may still be defensible on the grounds that the
+$f^\dag_{gy}$'s portray a reasonable state of foreknowledge or
+ignorance. Note that a Bayes factor will not be computable if the ML
+fitting procedure aborts due to a numerical exception.
+
+\noindent{\bf Comparing alternative models fit with the same prior.}
+Unlike traditional prior densities for $\bbeta$, the
+same DAP can be applied to models with different predictors
+and $\bbeta$'s of different sizes.
+Nested models can be compared
+with \texttt{anova()}
+either by differences in the loglikelihood (\texttt{method="lrt"})
+or by differences in the $\log P$ function
+(\texttt{method="logP"}), and non-nested models can be compared using
+\texttt{method="AIC"} or \texttt{method="BIC"}.
+A test of nested models based on $\log P$ has the same
+asymptotic properties as the corresponding LRT, because as the sample
+size increases, the impact of any fixed prior distribution is
+eventually overwhelmed by the influence of the data.
+In the example below, we test the significance of the
+\texttt{Lake:Size} interactions by fitting nested models with the same
+DAP.
+<<>>=
+# fit model without the Lake:Size interactions
+M1 <- rrLogit( Food ~ Lake + Size, data=alligatorMicro,
+   prior="DAP", priorFreqTot=2.19 )
+# refit model with Lake:Size interactions
+M2 <- rrLogit( Food ~ Lake*Size, data=alligatorMicro,
+   prior="DAP", priorFreqTot=2.19 )
+# compare using the default method="lrt"
+anova( M1, M2, pval=TRUE )
+# compare using method="logP"
+anova( M1, M2, method="logP", pval=TRUE )
+@
+If the prior is weak enough to allow the data to speak for themselves,
+then tests with \texttt{method="lrt"} and \texttt{method="logP"}
+should lead to similar conclusions.
+
+\noindent{\bf Adjusting the prior allocation.} When
+\texttt{prior="DAP"} and \texttt{priorAlloc} is not specified, the
+prior frequencies are distributed across response categories according to
+the marginal distribution of $Y$ in the sample. If some
+response categories are rare, this default setting might not be
+effective at pulling estimates away from the boundary unless
+\texttt{priorFreqTot} is unreasonably large. When this happens, a
+better choice for \texttt{priorAlloc} is the vector of uniform probabilities
+\texttt{rep(1/C, C)} 
+where \texttt{C} is the number of response categories. Uniform values
+for \texttt{priorAlloc} can be
+especially helpful when working with data that have been infused
+with noise, to which we now turn our attention.
+
+\section{Modeling noise-infused responses\label{sec:withNoise}}
+
+\subsection{A simple example\label{sec:unemployment}}
+
+\noindent{\bf Two randomized responses with no predictors.} We begin this
+section with a small dataset involving randomized
+response (RR). Because this example has no predictor variables, we might not
+need to use logistic regresssion; we can possibly get by with
+the simple method-of-moments (MOM) procedures described in Section
+\ref{sec:MOM}. Nevertheless, this example will introduce some of the basic
+features of \texttt{rrLogit()} that pertain to noise-infused responses.
+
+\cite{vandenhout2002randomized} describe a survey
+conducted in the Netherlands to detect rule violations in
+claims for unemployment benefits. One question, $Y_1$, asked
+participants whether they had ever avoided work by turning down a job
+offer or deliberately sabotaging a job application. Another question,
+$Y_2$, asked whether they had applied for fewer jobs than 
+the program required. To elicit more honest answers on these sensitive
+topics, each participant was given two decks of shuffled cards. The
+deck on the 
+right contained 80\% red cards and 20\% black cards, and the deck on
+the left had 20\% red and 80\% black. If the participant's true answer
+was ``Yes,'' they were to draw a card from the right and
+report its color, and if the answer was ``No,'' they were to do the
+same from the left. Treating red as a noisy version of ``Yes'' and black
+as a noisy version of ``No,''  each question had the same perturbation
+matrix
+\[
+\bT\,=\,\left[ \begin{array}{cc} 0.8 & 0.2 \\ 0.2 & 0.8 \end{array}\right].
+\]
+The cross classification of $N\,=\,412$ participants by the noisy
+versions $Y_1^*$ and $Y_2^*$ is shown in Table \ref{tab:DutchSurvey}.
+\begin{table}
+\caption{\label{tab:DutchSurvey}
+Frequencies from a survey on rule violations in
+unemployment benefits collected by randomized response: $Y_1^*$ =
+had respondent deliberately avoided work by rejecting a job offer or
+sabotaging a job application; $Y_2^*$ = had respondent applied for
+fewer jobs than required. Source: \cite{vandenhout2002randomized}}
+{\footnotesize
+\begin{center}
+\begin{center}
+\begin{tabular}{rrrr}
+\toprule
+\rule[-6pt]{0pt}{1pt} & \multicolumn{3}{c}{$Y_2^*$} \\
+\cline{2-4}
+\rule{0pt}{12pt}{$Y_1^*$} & 1 = Yes & 2 = No & Total \\
+\midrule
+1 = Yes & 68 & 52 & 120 \\
+2 = No & 103 & 189 & 292 \\
+\midrule
+Total & 171 & 241 & 412 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{center}}
+\end{table}
+
+\noindent{\bf Univariate analyses.}
+To begin, let's examine each response variable separately. We first create a
+data frame with a single row containing the marginal frequencies for
+$Y_1^*$. There are no covariates, so we fit an intercept-only
+model using the wide-format syntax. The \texttt{rrLogit()} function
+needs to know the perturbation matrix $\bT$, so we provide it through
+the argument \texttt{pertMat}.
+<<>>=
+# create a data frame containing the marginal frequencies for first question
+df.1 <- data.frame( Yes=120, No=292 )
+# enter the perturbation matrix
+Tmat <- matrix( c( .8, .2, .2, .8 ), 2, 2 )
+rownames(Tmat) <- colnames(Tmat) <- c("Yes","No")
+# fit the logistic model with no predictors and display the estimated beta
+fit.1 <- rrLogit( cbind(Yes, No) ~ 1, data=df.1, pertMat=Tmat )
+coef( fit.1 )
+@
+Estimated probabilities for the response categories are available from 
+\texttt{fitted()}. This method has an optional argument
+\texttt{noisy} that becomes relevant when $\bT\neq \bI$.
+When \texttt{noisy=TRUE}, it returns fitted values for
+the noisy response $Y^*$, and when \texttt{noisy=FALSE}, 
+it gives fitted values for the true response $Y$. The
+default setting is \texttt{FALSE}.
+<<>>=
+# fitted probs for the noisy response
+fitted( fit.1, noisy=TRUE )
+# fitted probs for the true response
+fitted( fit.1 )
+@
+Notice that the estimated probability of ``Yes'' for the true $Y_1$ is
+only $0.152$, compared to $0.291$ for the noisy $Y_1^*$. This behavior
+is common with noise-infused data. Unless a perturbation matrix is
+specifically designed to maintain the marginal proportions as with
+invariant PRAM (Section \ref{sec:choosingT}), the added noise
+tends to flatten the response distribution,
+making rare categories more common and common categories more rare.
+To get standard errors for the estimated probabilities, use
+\texttt{predict()} 
+with \texttt{se.fit=TRUE}. 
+<<>>=
+# standard errors for fitted probs, true response
+predict( fit.1, se.fit=TRUE )$se.fit
+@
+% The standard error for
+% $P(Y_1=\texttt{"Yes"})$ ($0.0373$) is
+% substantially larger than the standard error for
+% $P(Y^*_1=\texttt{"Yes"})$ ($0.0224$), which is another
+% consequence of noise infusion. Suppose that we had observed a proportion
+% $\hat{\pi}\,=\,0.152$ in a hypothetical sample of size $\tilde{N}$
+% without no added noise. If the standard error for $\hat{\pi}$ was
+% \[
+% \sqrt{ \frac{\hat{\pi} ( 1 - \hat{\pi}) }{\tilde{N}} }
+% \,=\,
+% 0.0373,
+% \]
+% then plugging in $\hat{\pi}\,=\,0.152$ and solving for the sample
+% size gives $\tilde{N}\,\approx\,93$. The information provided by
+% $N=412$ observations of $Y_1^*$ is roughly equivalent to what we might
+% have gotten from only 93 observations of $Y_1$, if that were possible.
+We now repeat the analysis for the second question.
+<<>>=
+# univariate analysis for question Y2
+df.2 <- data.frame( Yes=171, No=241 )
+fit.2 <- rrLogit( cbind(Yes, No) ~ 1, data=df.2, pertMat=Tmat )
+fitted( fit.2 )
+predict( fit.2, se.fit=TRUE )$se.fit
+@
+The estimate of $P(Y_2=\texttt{"Yes"})$ ($0.358$) is more than double
+the estimate of $P(Y_1=\texttt{"Yes"})$, suggesting that rule
+violations of the second kind are more common than the first.
+To formally examine this hypothesis, we need to analyze
+both responses together to account for the possibility that $Y_1$ and
+$Y_2$ are related.
+
+\noindent{\bf Comparing to the method of moments.}
+Before moving on to a joint analysis, let's pause to compare our results
+from \texttt{rrLogit()} to those from the MOM procedure in Section
+\ref{sec:MOM}.
+<<>>=
+# enter freqs from the noisy version of Y1 and compute the proportions
+noisyFreq <- c( Yes=120, No=292 )
+N <- sum( noisyFreq )
+piStarHat <- noisyFreq / N
+# MOM estimates for true proportions
+Tinv <- solve(Tmat)
+piHat.MOM <- as.vector( Tinv %*% piStarHat )
+piHat.MOM
+@
+The differences between the MOM estimates and those from
+\texttt{rrLogit()} are extremely small. 
+<<>>=
+# show the differences between rrLogit and MOM estimates
+abs( piHat.MOM - predict(fit.1) )
+@
+This is no accident, because
+whenever the MOM estimate lies in the interior of the parameter space
+(i.e., there are no negative estimated probabilities), MOM is
+identical to ML, with differences only due to rounding errors
+\citep{vandenhout2002randomized}. 
+Standard errors from the MOM covariance matrix (\ref{eq:VhatMOM}) are
+shown below.
+<<>>=
+# compute unbiased estimate of covariance matrix for MOM and the
+# corresponding standard errors
+Vhat.MOM <- Tinv %*% ( diag(piStarHat) - piStarHat %*% t(piStarHat) ) %*%
+   t(Tinv) / ( N - 1 )
+se.MOM <- sqrt( diag( Vhat.MOM ) )
+se.MOM
+@
+These are slightly different from ML because the MOM covariance matrix
+uses a denominator of $N-1$ to correct for bias.
+If we replace the MOM denominator with
+$N$, the two methods become equal except for rounding error. 
+<<>>=
+# replace denominator of N-1 with N, then compare the resulting SEs to
+# those from rrLogit
+se.MOM.biased <- sqrt( diag( Vhat.MOM * (N-1)/N ) )
+abs( se.MOM.biased - predict(fit.1, se.fit=TRUE)$se.fit )
+@
+
+\noindent{\bf Joint analysis of two noisy responses.}  To analyze the
+two variables together, we compound $Y_1^*$ and $Y_2^*$ into a single
+variable with four categories.
+<<>>=
+# create a one-row data frame with frequencies for the compounded variable
+df.12 <- data.frame( Yes.Yes=68, Yes.No=52, No.Yes=103, No.No=189 )
+@
+The perturbation matrix for the compounded variable is the Kronecker
+product of the individual matrices (Section
+\ref{sec:multipleVariables}).
+<<>>=
+bigT <- kronecker(Tmat, Tmat)
+rownames(bigT) <- colnames(bigT) <- c("Yes.Yes", "Yes.No", "No.Yes", "No.No")
+bigT
+# fit model to compounded variable, then display estimated probabilities
+# and SEs for the true proportions
+fit.12 <- rrLogit( cbind(Yes.Yes, Yes.No, No.Yes, No.No) ~ 1, data=df.12,
+   pertMat=bigT )
+fitted( fit.12 )
+predict( fit.12, se.fit=TRUE )$se.fit
+@
+Notice that the printed estimate of $P(Y_1=\texttt{"Yes"},
+Y_2=\texttt{"No"})$ 
+is essentially zero. Here the ML estimate for that probability
+is actually zero, but  
+the fitting procedure stopped when changes in the estimated
+probabilities from one iteration to the next fell below a
+threshold.\footnote{Alert readers may wonder why \texttt{rrLogit()}
+did not issue a message about estimates on the boundary for this
+example. Proximity to a boundary is judged by the control parameter
+\texttt{critBoundary}, whose default value is \texttt{1e-08}. When the
+estimation procedure halted, the
+fitted probability for the \texttt{Yes.No} cell was
+a tiny bit larger than this, so no message was given.} This is an
+example where ML and MOM
+give different 
+results; the MOM estimated probability for that category is negative.
+<<>>=
+# compute MOM estimates for the compounded variable
+noisyFreq <- c( Yes.Yes=68, Yes.No=52, No.Yes=103, No.No=189 )
+N <- sum( noisyFreq )
+piStarHat <- noisyFreq / N
+# MOM estimates for true proportions
+bigTinv <- solve(bigT)
+piHat.MOM <- as.vector( bigTinv %*% piStarHat )
+piHat.MOM
+@
+
+\noindent{\bf How common are boundary estimates?}
+Because the ML estimate for 
+$\pi_{12}\,=\, P(Y_1=\texttt{"Yes"}, Y_2=\texttt{"No"})$ is zero, and
+the reported standard error for $\hat{\pi}_{12}$ is also very small, it
+is tempting to  conclude that this category in the population must be
+empty or extremely rare. That
+would be a mistake. Noise infusion by RR or PRAM can make
+small subpopulations hard to detect even when they are not very
+rare. To illustrate, imagine a population in which the true proportions
+for the four categories are
+\[
+\bpi\,=\,(\pi_{11},\pi_{12},\pi_{21},\pi_{22})^\top\,=\,
+(0.17,0.02,0.21,0.60)^\top.
+\]
+If we drew a random sample of $N=412$ individuals from this
+population, it is very likely that the sample would have at
+least one person from cell $(1,2)$; the chance of getting no
+one from that category is only $(1-0.02)^{412}\,=\,0.000243$ or about
+one in 4,000. Now imagine applying the noise mechanism from this example
+to the true responses. The
+table of noisy frequencies from the sample would be distributed as
+$\mbox{Mult}(N,\bpi^*)$ with $N=412$ and
+\[
+\bpi^* \,=\,
+\left[
+\begin{array}{cccc}
+0.64 & 0.16 & 0.16 & 0.04 \\
+0.16 & 0.64 & 0.04 & 0.16 \\
+0.16 & 0.04 & 0.64 & 0.16 \\
+0.04 & 0.16 & 0.16 & 0.64
+\end{array}\right] \,
+\left[
+\begin{array}{c}
+0.17 \\ 0.02 \\ 0.21 \\ 0.60
+\end{array}\right] \,=\, 
+\left[
+\begin{array}{c}
+0.1696 \\ 0.1444 \\ 0.2584 \\ 0.4276
+\end{array}\right].
+\]
+Using R, let's draw 10,000 samples from this population and see how
+often the ML estimates for elements of $\bpi$ are zero. We
+could do this 
+by applying \texttt{rrLogit()} to each sample, but it's easier and
+faster to simply compute the MOM estimates and observe how many estimated
+probabilities are negative.
+<<>>=
+piTrue <- c( .17, .02, .21, .60 )
+piStarTrue <- bigT %*% piTrue
+N <- 412
+nSamp <- 10000
+set.seed(30966) # for reproducibility
+samples <- rmultinom(nSamp, N, piStarTrue)
+piStarHat.Samples <- samples / N
+piHat.MOM.Samples <- bigTinv %*% piStarHat.Samples
+apply( piHat.MOM.Samples < 0, 1, FUN=mean ) 
+@
+About 30\% of the samples produced negative estimates for
+$P(Y_1 = \texttt{"Yes"}, Y_2 = \texttt{"No"})$. With these rates of noise
+infusion and a sample size of $N=412$, negative estimates from MOM and
+zero estimates from ML are very common, and neither of those answers
+makes sense. In situations like these, we recommend applying
+\texttt{rrLogit()} with a DAP.
+
+\noindent{\bf Data-augmentation prior with a noise-infused response.}
+In Section \ref{sec:DAP}, we described DAPs 
+for a non-noisy response. With a noisy
+response, a DAP works the same way, with the caveat that we are now
+seeding the dataset with imaginary observations of the unseen \emph{true}
+response variable. To illustrate, let's refit our model using a DAP
+with \texttt{priorFreq=2} and
+\texttt{priorAlloc=rep(1/4,4)}. This adds information 
+equivalent to seeing the true responses for $N^\dag=2$ imaginary
+persons, allocating them uniformly across the four cells of
+the true response table, $0.5$ imaginary persons per cell.
+<<>>=
+# apply a data-augmentation prior and refit
+fit.12.DAP <- rrLogit( cbind(Yes.Yes, Yes.No, No.Yes, No.No) ~ 1, data=df.12,
+   pertMat=bigT, prior="DAP", priorFreqTot=2, priorAlloc=rep(1/4, 4) )
+# Bayes factor comparing the two estimates
+exp( loglik(fit.12) - loglik(fit.12.DAP) )
+@
+The Bayes factor comparing the two solutions is only
+1.48, so there is almost no evidence in the data to prefer the ML
+estimate to the posterior mode.
+With this DAP, the estimate of $\pi_{12}$ is much more plausible, and its
+standard error is larger.
+<<>>=
+# show estimated probs for true response and their SEs
+piHat <- as.vector( fitted( fit.12.DAP ) )
+piHat
+piSE <- as.vector( predict( fit.12.DAP, se.fit=TRUE )$se.fit )
+piSE
+@
+An approximate 95\% confidence interval computed as $\hat{\pi}_{12}\pm
+1.96\,\mbox{SE}(\hat{\pi}_{12})$ would stray into
+the negative range. A better approach is to compute the
+interval on the logit scale and transform its endpoints back to the
+probability scale.
+<<>>=
+# compute 95\% intervals for each pi on the logit scale, then transform
+# endpoints back to probabilities
+logit <- function(pi) log( pi / (1-pi) )
+logitDeriv <- function(pi) 1 / ( pi * (1-pi ) )
+logitInv <- function(psi) exp(psi) / ( 1 + exp(psi) )
+psiHat <- logit( piHat )
+psiLower <- psiHat - qnorm(.975) * logitDeriv( piHat ) * piSE
+psiUpper <- psiHat + qnorm(.975) * logitDeriv( piHat ) * piSE
+endpoints.95 <- data.frame( piLower=logitInv(psiLower),
+   piUpper=logitInv(psiUpper))
+rownames( endpoints.95 ) <- names( df.12 )
+endpoints.95
+@
+
+\noindent{\bf Inferences for other parameters.} When we examined the
+two questions separately, our estimate for $P(Y_2=\texttt{"Yes"})$
+was higher than our estimate for $P(Y_1=\texttt{"Yes"})$, suggesting
+that rule violations of the second kind are more common than the
+first. Using results from the joint analysis, we can now test the
+null hypothesis that 
+$d=P(Y_2=\texttt{"Yes"}) - P(Y_1=\texttt{"Yes"})=0$. Because
+\[
+d\,=\, ( \pi_{11} \,+\, \pi_{21} )\,-\,
+( \pi_{11}\,+\,\pi_{12})\,=\,\pi_{21}\,-\,\pi_{12},
+\]
+this is equivalent to testing whether $\pi_{21}$ is different from
+$\pi_{12}$. The estimated variance of
+$\hat{d}\,=\,\hat{\pi}_{21}-\hat{\pi}_{12}$ is $\ba^\top
+\hat{V}(\hat{\bpi})\,\ba$, where $\ba\,=\,(0,-1,1,0)^\top$. In the code
+below, we use \texttt{predict()} with \texttt{se.fit=TRUE} to
+extract $\hat{V}(\hat{\bpi})$ and then compute the approximate 95\% 
+interval for $d$.
+<<>>=
+# extract estimated cov matrix for fitted probs
+vHatPi <- predict( fit.12.DAP, se.fit=TRUE )$cov.fit.array[1,,]
+vHatPi
+# compute a CI for d
+d <- piHat[3] - piHat[2]
+a <- c(0,-1,1,0 )
+dSE <- sqrt( t(a) %*% vHatPi %*% a )
+dLower <- d - qnorm(.975) * dSE
+dUpper <- d + qnorm(.975) * dSE
+c( dLower, dUpper )
+@
+The interval does not include zero, so we have strong evidence that $d\neq
+0$. To investigate whether $Y_1$ and $Y_2$ are related, we could apply
+the delta method to compute a normal-theory interval for
+the odds ratio 
+\[
+\omega \,=\,\frac{\pi_{11}\pi_{22}}{\pi_{12}\pi_{21}} .
+\]
+However, because the loglikelihood function rises as
+$\pi_{12}\rightarrow 0$, the estimate of $\omega$ is unstable and the
+normal approximation is poor. A better way to address this would be
+to simulate random draws from the Bayesian posterior distribution of $\omega$
+using Markov chain Monte Carlo (MCMC), which does not rely on
+large-sample normal approximations. We will demonstrate the use of MCMC
+in Section \ref{sec:Bayesian}.
+
+\subsection{Some details about the model\label{sec:theModel}}
+
+\noindent{\bf Model definition.} For a noise-infused response,
+\texttt{rrLogit()} groups rows of the input
+dataset by their covariate patterns and tabulates the noisy response 
+$Y^*$ within each group. Let $\bx_g$  ($p\times 1$) denote the vector
+of covariates and
+$\beff^*_g\,=\,(f^*_{g1},\ldots,f^*_{gC})^\top$ the noisy
+frequencies for group $g=1,\ldots,G$. Treating the
+within-group sample size $N_g\,=\,\sum_{y=1}^C f^*_{gy}$ as fixed,
+we assume $\beff^*_g$ is distributed as
+\[
+\beff^*_g\,\sim\,\mbox{Mult}(N_g,\bpi^*_g)
+\]
+independently for $g=1,\ldots,G$. The noisy response probabilities
+$\bpi^*_g$ relate to the true ones
+$\bpi_g\,=\,(\pi_{g1},\ldots,\pi_{gC})^\top$ by
+\[
+\bpi^*_g\,=\,\bT\bpi,
+\]
+where $\bT$ is a known full-rank perturbation matrix, and $\bpi_g$
+depends on the covariates through the baseline-category logits
+\[
+\eta_{gy}\,=\,\log\left(\frac{\pi_{gy}}{\pi_{gb}}\right)\,=\,\bx_g^\top\bbeta_y,
+\]
+with $\bbeta_b=\bzero$ for the baseline category $b$. The
+transformation from $\bfeta_g\,=\,(\eta_{g1},\ldots,\eta_{gC})^\top$
+to $\bpi_g$ is
+\[
+\pi_{gy}\,=\,\frac{\exp(\eta_{gy})}{\sum_{y^\prime=1}^C\exp(\eta_{gy^\prime})}.
+\]
+The stacked vector of coefficients with $\bbeta_g$ removed is denoted by
+$\bbeta$, which has length $d=p(C-1)$.
+
+\noindent{\bf Model fitting.}
+By analogy to MOM, it might be tempting to estimate $\bbeta$ by
+fitting a conventional baseline-category logit model to the noisy
+response $Y^*$ and transforming the distorted coefficients to
+correct for the noise. Except in special cases, the
+relationship between $\bpi_g^*$ and $\bfeta_g$ is not logistic, so
+that strategy does not work; we need fitting techniques
+specially designed for this situation.
+
+The loglikelihood for this model is
+\begin{equation}
+l\,=\,\sum_{g=1}^G \sum_{y=1}^C f^*_{gy}\log\pi^*_{gy}.
+\label{eq:loglikNoise}
+\end{equation}
+Despite a superficial resemblance to
+the loglikelihood for a non-noisy response (\ref{eq:loglik}),
+this function can behave very differently over the parameter space
+$\bbeta\in\mathbb{R}^d$. It may be oddly shaped and non-concave,
+especially in regions far from the maximum. If the perturbation matrix
+is nearly singular, which tends to happen if the rates of noise
+infusion from RR or PRAM are high, this function becomes nearly
+constant over a lower-dimensional 
+subspace of $\mathbb{R}^d$. These unusual features may cause
+Newton-Raphson (NR) to 
+fail. Fisher scoring (FS), a close cousin of NR, doesn't fare much
+better.
+
+For maximizing (\ref{eq:loglikNoise}), our default method is an
+expectation-maximization (EM) algorithm that treats 
+the noise-free response $Y$ as missing data. The
+procedure alternates between an expectation or E-step and a
+maximization or M-step. In the E-step, we replace each vector of
+unseen frequencies $\beff_g$ by its conditional expected value given
+the observed noisy frequencies,
+\begin{equation}
+\hat{\beff}_g \,=\, E( \beff_g\,|\,\beff^*_g, \bbeta),
+\label{eq:Estep}
+\end{equation}
+fixing the unknown $\bbeta$
+at its most recent estimate. In the M-step, we update the
+estimate for $\bbeta$ by
+maximizing the
+loglikelihood function (\ref{eq:loglik}) for the non-noisy response,
+with the unseen $\beff_g$'s replaced by their expected values
+$\hat{\beff}_g$'s from the E-step. The M-step is carried out by NR,
+which for this purpose tends to work well. Alternating
+between the E- and M-steps creates a sequence of $\bbeta$'s that
+converges to a local maximum of (\ref{eq:loglikNoise}).
+This EM algorithm was previously described for binary response variables
+by \cite{van1999analysis}, \cite{woo2012logistic}, and
+\cite{blair2015design}. Details of the EM implementation  
+are given in \ref{app:EM}.
+
+\noindent{\bf Predictive distribution for the true frequencies given
+the noisy ones.} The expected true frequencies $\hat{\beff}_g$ play a
+key role in model fitting and interpretation, so it is worthwhile to
+understand how we compute them. Imagine a two-way table as shown in
+Table \ref{tab:observedByTrue} that
+cross-classifies the units from a single covariate pattern $g$ by
+their values of $Y^*$ and $Y$.
+\begin{table}
+\caption{\label{tab:observedByTrue}
+Frequencies in the hypothetical two-way table that classifies
+observational units 
+in covariate pattern $g$ by their values of the noisy response $Y^*$
+and the true response $Y$.} 
+{\footnotesize
+\begin{center}
+\begin{center}
+\begin{tabular}{cccccc}
+\toprule
+\rule[-6pt]{0pt}{1pt} & \multicolumn{5}{c}{$Y$} \\
+\cline{2-6}
+\rule{0pt}{12pt}{$Y^*$} & $1$ & $2$ & $\cdots$ & $C$ & Total \\ 
+\midrule
+$1$ & $F_{g11}$ & $F_{g12}$ & $\cdots$ & $F_{g1C}$ & $f^*_{g1}$ \\*[2pt]
+$2$ & $F_{g21}$ & $F_{g22}$ & $\cdots$ & $F_{g2C}$ & $f^*_{g2}$ \\*[2pt]
+$\vdots$ & $\vdots$ & $\vdots$ & $\ddots$ & $\vdots$ & $\vdots$ \\*[2pt]
+$C$ & $F_{gC1}$ & $F_{gC2}$ & $\cdots$ & $F_{gCC}$ & $f^*_{gC}$ \\
+\midrule
+Total & $f_{g1}$ & $f_{g2}$ & $\cdots$ & $f_{gC}$ & $N_g$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{center}}
+\end{table}
+The row totals $\beff^*_g\,=\,(f^*_{g1},\ldots,f^*_{gC})^\top$ in
+the last column are seen, but the
+interior frequencies $F_{grs}$ and the column totals
+$\beff_g\,=\,(f_{g1},\ldots,f_{gC})^\top$ in the bottom row are unknown.
+Conditioning on the row totals and a given value for $\bbeta$, the
+interior frequencies in this table have a product-multinomial
+distribution. Specifically, let
+$\bF_{gr\cdot}\,=\,(F_{gr1},\ldots,F_{grC})^\top$ denote the 
+interior frequencies from row $r$. These frequencies are distributed
+as
+\[
+\bF_{gr\cdot}\,|\,f^*_{gr}, \bbeta \,\sim\,
+\mbox{Mult}(f^*_{gr},\bphi_{gr})
+\]
+independently for $r=1,\ldots,C$, and the probabilities
+$\bphi_{gr}\,=\,(\phi_{gr1},\ldots,\phi_{grC})^\top$ come from
+Bayes' Theorem,
+\begin{equation}
+\phi_{grs} \,=\,
+\frac{ t_{rs}\,\pi_{gs} }{ \sum_{s^\prime = 1}^C
+t_{rs^\prime}\,\pi_{gs^\prime} } .
+\label{eq:phigrs}
+\end{equation}
+Therefore, given $\beff^*_g$ and $\bbeta$, the vector of true
+frequencies $\beff_g$ is distributed as the sum of independent
+multinomial vectors; in a slight abuse of notation,
+\begin{equation}
+\beff_g \,|\,\beff^*_g,\bbeta \,\sim\,
+\sum_{r=1}^C \mbox{Mult}(f^*_{gr},\bphi_{gr}).
+\label{eq:predictiveDisn}
+\end{equation}
+This distribution has expected value
+\[
+E(\beff_g \,|\, \beff^*_g, \bbeta)\,=\, \bPhi_g^\top \beff^*_g, 
+\]
+where $\bPhi_g$ is the $C\times C$ matrix with $(r,s)$th element given
+by (\ref{eq:phigrs}). In the PRAM literature, 
+$\bPhi_g^\top$ has been called a calibration matrix
+and is sometimes written as $\bT^{\leftharpoonup}$ 
+\citep{van2006statistical}. Like $\bT^{-1}$, it has
+the ability to
+transform observed frequencies or proportions from the noisy response
+into consistent estimates for the true response. In general, it is not
+an inverse of $\bT$, and it depends both on $\bT$ and the unknown true
+response prevalences $\bpi_g$ specific to covariate pattern $g$.
+
+\subsection{A hypothetical application of PRAM to real survey
+data\label{sec:NHIS}}
+
+For this example, we rely on data from the National Health Interview
+Survey (NHIS), an annual cross-sectional study sponsored by the
+National Center for Health Statistics and conducted by the U.S. Census
+Bureau.  NHIS collects information on health status and behaviors in a
+large representative sample of the non-institutionalized
+U.S. population.  The dataset \texttt{cig2019}, which is distributed
+with the \texttt{rrLogit} package, includes items pertaining to
+self-reported cigarette smoking for nearly 32,000 adults interviewed
+in the 2019 NHIS.  Basic demographic and geographic characteristics
+(age, sex, race/ethnicity, urbanicity, region) are included as well,
+along with a few variables that summarize the sampling design. For
+more information on 
+this dataset, see \texttt{?cig2019}.
+
+\noindent{\bf Key variable.} This set of microdata was released to
+the public without added 
+noise. Using the simple noise-infusion utilities included with
+\texttt{rrLogit}, we will apply PRAM to one key variable, a classifier
+of race and Hispanic origin with seven
+levels.\footnote{This illustrates an important practical difference
+between RR and PRAM. In RR, perturbed variables tend to be questions
+on sensitive topics that the respondent might be reluctant to answer
+truthfully. With PRAM, the perturbed variables tend to be common
+demographic and geographic descriptors that might be combined with
+external information to uniquely identify individuals.} In the code
+below, we change the variable's name to \texttt{raceEth} and change
+its levels to short character strings.
+\begin{mydescription}
+\item[\texttt{1="Hispanic"}] Hispanic, any race
+\item[\texttt{2="White"}] non-Hispanic White as sole race
+\item[\texttt{3="Black"}] non-Hispanic Black/African American as sole
+race
+\item[\texttt{4="Asian"}] non-Hispanic Asian as sole race
+\item[\texttt{5="AIAN"}] non-Hispanic American Indian/Alaska native
+as sole race
+\item[\texttt{6="AIAN+}] non-Hispanic American Indian/Alaska native
+plus at least one other race
+\item[\texttt{7="Other"}] all other single and multiple race
+categories
+\end{mydescription}
+<<>>=
+# copy cig2019 into the local workspace and show variable names
+data(cig2019)
+names(cig2019)
+# rename the variable hispallp_a to raceEth and assign short
+# character strings for the levels
+raceEth <- cig2019$hispallp_a
+levels(raceEth) <- c("Hispanic", "White", "Black", "Asian",
+   "AIAN", "AIAN+", "Other")
+# display marginal frequencies
+table(raceEth)
+@
+Notice that three of the categories are relatively rare, each
+comprising one percent or less of the sample. Disclosure risks could be
+reduced by collapsing this variable into fewer categories, but the
+data would  then become useless for investigating certain questions,
+e.g., how patterns of tobacco use vary among the original groups.
+The minority categories are important for scientific, social and
+policy purposes, so we want to retain them if possible.
+
+\noindent{\bf Other variables.} The first
+question on cigarette use was, ``Have you smoked at least 100
+cigarettes in your ENTIRE LIFE?'' If the response was ``Yes,''
+the participant was asked additional questions about past and current
+smoking; if ``No,'' those questions were skipped. Here we
+combine the smoking items into a single variable  \texttt{smokStat}
+classifying respondents as never smokers, former smokers, current
+non-heavy smokers, or current heavy smokers.
+<<>>=
+# create a four-level categorization of smoking status
+#  1: never smoker
+#  2: former smoker
+#  3: current smoker, non-heavy
+#  4: current smoker, heavy
+# A heavy smoker is defined as someone who, on average, smokes 25 or more
+# cigarettes per day. 
+smokStat <- integer( NROW(cig2019) )
+smokStat[] <- NA
+smokStat[ cig2019$smkev_a == "No"  ] <- 1L   # Never smoker
+smokStat[ ( cig2019$smkev_a == "Yes" ) &
+   ( cig2019$smknow_a == "Not at all" )   ] <- 2L   # Former smoker
+smokStat[ ( cig2019$smknow_a == "Every day" ) &
+   ( cig2019$cignow_a < 25 ) ] <- 3L        # Current smoker, non-heavy
+smokStat[ ( cig2019$smknow_a == "Some days" ) &
+   ( ( cig2019$smk30d_a / 30 ) * cig2019$cig30d_a < 25 ) ] <- 3L
+smokStat[ ( cig2019$smknow_a == "Every day" ) &
+   ( cig2019$cignow_a >= 25 ) ] <- 4L        # Current smoker, heavy
+smokStat[ ( cig2019$smknow_a == "Some days" ) &
+   ( ( cig2019$smk30d_a / 30 ) * cig2019$cig30d_a >= 25 ) ] <- 4L
+smokStat <- factor( smokStat )
+levels(smokStat) <- c("Never", "Former", "Current non-heavy",
+   "Current heavy" )
+@
+Other covariates that we will consider are
+\begin{mydescription}
+\item[metro] urbanicity, with levels \texttt{1="Large central metro"},
+\texttt{2="Large fringe metro"}, \texttt{3="Med/small metro"},
+\texttt{4="Nonmetropolitan"},
+\item[region] census region, with levels
+\texttt{1="Northeast"}, \texttt{2="Midwest"}, \texttt{3="South"},
+\texttt{4="West"},
+\item[age] in years,
+\item[catAge] categorized age, with levels
+\texttt{1="[18,25]"}, \texttt{1="(25,35]"}, \texttt{1="(35,45]"},
+\texttt{1="(45,55]"}, \texttt{1="(55,65]"}, \texttt{1="(65,75]"},
+\texttt{1="(75,85]"}, and
+\item[sex] with levels \texttt{1="Male"} and \texttt{2="Female"}.
+\end{mydescription}
+<<>>=
+# get demographic and geographic variables
+metro <- cig2019$urbrrl
+region <- cig2019$region
+age <- cig2019$agep_a
+catAge <- cut( age, breaks=c(18,25,35,45,55,65,75,85), include.lowest=TRUE)
+sex <- cig2019$sex_a
+@
+
+\noindent{\bf Simplifications.} Before proceeding, we will quickly bypass
+two issues that, if we handled them in a more careful way,
+would add unnecessary details and distract from our intended
+purpose. The first issue is missing values that appear in some
+variables. To handle these, we delete the incomplete cases, slightly
+reducing the sample size.
+<<>>=
+# put variables into a new data frame 
+df <- data.frame( raceEth, smokStat, metro, region, catAge, sex)
+# show percentage of missing values per variable
+round( 100 * apply( is.na(df), 2, FUN=mean ), 1 )
+# eliminate rows with missing values
+incomplete <- apply( is.na(df), 1, any )
+df <- df[ ! incomplete, ]
+# get rid of the rownames that correspond to the original row numbers
+rownames(df) <- NULL
+# see how many rows there were originally, and how many are left
+NROW(cig2019)
+NROW(df)
+@
+The second issue pertains to the complex sample design. The \texttt{cig2019}
+dataset includes weights to adjust estimates for unequal
+probabilities of selection and nonresponse, and
+stratum and cluster identifiers for variance
+estimation. Incorporating those features would not be difficult, but
+to keep this presentation focused, we will ignore the design and treat the
+$N=\mbox{31,032}$ respondents in our reduced sample as if they are a simple
+random sample from the target population. Applications with complex
+sample designs may be addressed in future versions of \texttt{rrLogit}.
+
+\noindent{\bf Adding noise.} To create a PRAMed version of
+\texttt{RaceEth}, we will use the perturbation matrix given by
+(\ref{eq:WangWuHuMatrix}), setting the local DP privacy-loss parameter to
+$\epsilon=1.5$. This matrix can be computed automatically using the
+function \texttt{rrPertMat()}.
+<<>>=
+# perturbation matrix proposed by Wang, Wu and Hu (2013) with a
+# privacy-loss parameter of 1.5
+Tmat <- rrPertMat( privLoss=1.5, nLevels=7 )
+round(Tmat, 4)
+@
+This noise mechanism discards a majority of the true
+values; it keeps the recorded category
+with probability $p\approx 0.43$, and otherwise replaces it with a category
+drawn from the other six with equal probability. 
+To generate the noisy variable, we supply the true version to
+\texttt{rrPerturbResponse()} along with the perturbation matrix. This
+function expects the user 
+to supply microdata, not a dataset with frequencies, because the noise
+is being applied at the level of individuals.
+<<>>=
+# create a noisy version of raceEth and add it to the data frame
+set.seed(52274866)  # for reproducibility
+df$raceEth.noisy <- rrPerturbResponse( df$raceEth, Tmat )
+@
+Here we display the marginal percentages for the true and noisy
+versions, along with the MOM estimates from the noisy version.
+<<>>=
+# compute percentages from original and noisy versions
+pct.orig <- 100 * table( df$raceEth ) / NROW(df)
+pct.noisy <- 100 * table( df$raceEth.noisy ) / NROW(df)
+# estimate original percentages from noisy version using MOM
+Tinv <- solve(Tmat)
+pct.MOM <- Tinv %*% pct.noisy
+# display percentages rounded to two decimal places
+result <- cbind( pct.orig, pct.noisy, pct.MOM )
+colnames(result) <- c("orig", "noisy", "MOM" )
+round( result, 2 )
+@
+Notice how the noise severely flattened the variable's
+distribution, but MOM brought it back to something close
+to the original; the difference between the MOM estimate and
+the original percentages reflects noise added by PRAM.
+
+By repeatedly calling \texttt{rrPerturbResponse()}, it would be easy
+to run a simulation verifying that, over repetitions of PRAM,
+the average of the MOM estimates approximates the original sample
+percentages. Also, we could show that the variability of the MOM
+estimates over repeated PRAM is approximated by the
+covariance matrix (\ref{eq:SigmaTerm2}). Simulations with repeated
+PRAM help a statistical agency study the impact of noise mechanisms
+and understand tradeoffs between disclosure risk and data
+utility. We will not pursue those here. Instead, we
+assume the perspective of a data user who has access to
+\texttt{raceEth.noisy} and the perturbation matrix but not
+\texttt{raceEth}, and we will show how to use this information and
+functions in \texttt{rrLogit} to make inferences about the
+population.
+
+\subsection{Building predictive models\label{sec:buildModel}}
+
+\noindent{\bf Response and predictors.} In an \texttt{rrLogit} model,
+the noise-infused variable always plays the role of response, and non-noisy
+variables serve as predictors. If we consider the ultimate goal of
+the data analysis, however, a variable distorted by PRAM is usually
+some characteristic like \texttt{raceEth} that will eventually become
+a predictor for one or more non-perturbed variables like
+\texttt{smokStat}.  Using the data from \texttt{cig2019}, we may
+ultimately want to examine rates and patterns of smoking within
+classifications by age, sex and race, or look for differences in
+smoking by race and region. We will implement this role reversal in
+Section \ref{sec:MI} through multiple imputation.
+
+For now, we pursue the intermediate goal of using
+\texttt{raceEth.noisy} to build predictive models for
+\texttt{raceEth}, models that capture its
+relationships with \texttt{smokStat},
+and other variables that will be examined later. For example, if we
+intend to analyze smoking by race and sex, we should consider predictive
+models that include 
+\texttt{smokStat}, \texttt{sex}, and \texttt{smokStat:sex}. If we intend
+to look at smoking by race and region, 
+the predictive models should have \texttt{smokStat}, \texttt{region}, and
+\texttt{smokStat:region}. Future analyses that do not involve
+race (e.g., smoking by urbanicity and region) are not impacted by noise
+infusion and do not need \texttt{rrLogit}. Given the
+wide range of possible future analyses, it is usually impractical and
+undesirable to create one comprehensive predictive model that can
+accommodate all of them; it is often better to use smaller,
+more focused and well tuned models designed with specific analyses
+in mind.
+
+\noindent{\bf Aggregating the data.} Before
+proceeding, let's collapse our microdata
+with $N=\mbox{31,032}$ rows into narrow format with
+frequencies.
+<<>>=
+# rename the data frame to dfMicro
+dfMicro <- df
+# aggregate df to narrow format with frequencies; each row will consist
+# of a unique combination of the noisy response and the predictors
+df$Freq <- 1
+df <- aggregate( Freq ~ raceEth.noisy + smokStat + metro + region +
+   catAge + sex, data=df, FUN=sum )
+# see how many rows there are now, and examine the first few rows
+NROW(df)
+head(df)
+@
+This aggregation step is optional and has little impact on
+computational speed, because 
+\texttt{rrLogit()} always groups data by covariate and
+response patterns before fitting any model. The main advantage of
+aggregating is that it sorts the rows of data by the levels
+of the covariates, which will make the results from \texttt{fitted()} and
+\texttt{residuals()} appear in their natural order for easier interpretation.
+
+\noindent{\bf Handling failure to converge.}
+Because \texttt{smokStat} is the future outcome variable, let's begin
+with a model that has
+\texttt{smokStat} as its only predictor.
+<<>>=
+# fit model to aggregated data; don't forget to include the 'freq' argument 
+fit.1 <- rrLogit( raceEth.noisy ~ smokStat, data=df, freq=Freq, pertMat=Tmat )
+@
+\vspace*{-18pt}
+\begin{Schunk}
+\begin{Soutput}
+Estimate at or near boundary; standard errors may be unreliable
+Warning message:
+In rrLogit.formula(raceEth.noisy ~ smokStat, data = df, freq = Freq,  :
+  Procedure failed to converge by iteration 1000
+\end{Soutput}
+\end{Schunk}
+The boundary message tells us that some of the estimated
+$\hat{\pi}_{gy}$'s have gotten very
+close to zero. The
+warning about failure to converge means
+that, even after 1,000 iterations, some of the $\hat{\pi}_{gy}$'s have
+still not stabilized. EM can be painfully slow to
+converge, especially when noise-infusion rates are high. To achieve
+convergence, we can re-run the procedure while increasing the
+control parameter 
+\texttt{iterMaxEM} from its default value of 1,000 to
+something larger, like this.
+<<>>=
+fit.1 <- rrLogit( raceEth.noisy ~ smokStat, data=df, freq=Freq, pertMat=Tmat,
+   control=list(iterMaxEM=5000) )
+@
+\vspace*{-18pt}
+\begin{Schunk}
+\begin{Soutput}
+Estimate at or near boundary; standard errors may be unreliable
+\end{Soutput}
+\end{Schunk}
+The convergence warning has disappeared, and the output from 
+\texttt{summary(fit.1)} (not shown) tells 
+us that EM converged at iteration 1,324.
+A disadvantage of this method is that EM restarts
+from the beginning, sacrificing the progress already made in
+the first 1,000 steps. A more efficient strategy would have been to take 
+the object created by 
+\texttt{rrLogit()} and feed it to the function again, like this:
+<<echo=TRUE, eval=FALSE>>=
+fit.1 <- rrLogit( fit.1 )
+@
+In this approach, \texttt{rrLogit()} takes the parameter estimates
+in \texttt{fit.1} as starting values and continues to run EM, reaching
+convergence at iteration 324. If you call \texttt{rrLogit()}
+with an \texttt{rrLogit} object as its first argument, the
+data, model, prior distribution, parameter
+estimates, control parameters, etc.\ are automatically transferred to
+the new call,
+and unless a new 
+\texttt{method} is provided, whatever procedure was being done in the
+old call is continued in the new one. Roughly speaking,
+calling \texttt{rrLogit()} on an \texttt{rrLogit} object means,
+``Carry on; do more of the same, unless I tell you otherwise.''
+If EM fails to converge, you can also feed the 
+\texttt{rrLogit} object back into \texttt{rrLogit()} but change the
+method to Newton-Raphson, as shown below.
+<<echo=TRUE, eval=FALSE>>=
+fit.1 <- rrLogit( fit.1, method="NR" )
+@
+NR converges much faster
+than EM, but it is less stable and can easily fail unless its starting
+values are already close to the maximum. For more discussion about
+this, see \ref{app:EM}. 
+
+\noindent{\bf Handling estimates at the boundary.}
+In conventional logistic regression with a non-noisy response,
+estimates on a boundary happen when 
+covariate patterns contain zero frequencies. For this example, however,
+the frequency table for \texttt{smokStat} by
+\texttt{raceEth.noisy} has no zeros.
+<<>>=
+# display the contingency table for smokStat by raceEth.noisy
+xtabs( Freq ~ smokStat + raceEth.noisy, data=df)
+@
+The nature of the problem becomes apparent when we examine the
+fitted values for the unseen true response.
+<<>>=
+# display fitted means, rounded to one decimal place
+fitted( fit.1, type="mean", include.predvars=TRUE, digits=1 )
+@
+The dataset has relatively few current heavy smokers, and the fitted model
+estimates that none of them belong to the \texttt{Hispanic},
+\texttt{Asian}, \texttt{AIAN+} or \texttt{Other} categories.  Also,
+the fitted model is finding no former smokers in the category
+\texttt{Other}. We could try to resolve these problems by
+combining the current heavy smokers with current non-heavy smokers, or
+by collapsing \texttt{Other} into another racial group, but that
+would preclude future analyses targeting those
+subpopulations. Instead of collapsing, we will keep the
+existing categories and apply a prior distribution.
+With a little experimentation, we
+found that a very mild DAP with \texttt{priorFreqTot=7} and
+\texttt{priorAlloc=rep(1/7,7)} moves the estimate away from the
+boundary with very little change in the loglikelihood relative to the
+ML solution. This prior adds just one fictitious person to each of the
+seven categories of \texttt{raceEth}.
+<<>>=
+# apply a mild prior that moves the estimates away from the boundary
+fit.2 <- rrLogit( raceEth.noisy ~ smokStat, data=df, freq=Freq, pertMat=Tmat,
+   prior="DAP", priorFreqTot=7, priorAlloc=rep(1/7,7) )
+# Bayes factor comparing posterior mode to the ML estimate
+exp( loglik(fit.1) - loglik(fit.2) )
+# display new fitted means
+fitted( fit.2, type="mean", include.predvars=TRUE, digits=1 )
+@
+
+\noindent{\bf Fitting richer predictive models.} The current model has
+\texttt{smokStat} as its only predictor. If we intend to analyze rates
+of smoking by race/ethnicity and other variables, those variables
+should be included with sufficient interactions to support the future
+analyses. For example, a model with terms \texttt{smokStat*sex} allows the
+relationship between race/ethnicity and smoking status to vary by sex,
+and can therefore support estimation of smoking rates within a
+classification by race/ethnicity and sex. For illustration, we now fit two
+predictive models:
+\begin{description}
+\item[Model A:] \texttt{smokStat*sex*catAge}, which can support
+estimation of smoking rates within classes of race/ethnicity $\times$
+sex $\times$ age, and
+\item[Model B:] \texttt{smokStat*region*metro}, which can support
+estimation of smoking rates within classes of race/ethnicity $\times$
+region $\times$ urbanicity.
+\end{description}
+For both of these models, the EM algorithm converges slowly. In each
+case, we run EM for 1,000 iterations to get close to the mode, and then
+switch to NR which reaches a solution very quickly.
+% change next line to eval=TRUE if fitAB.rda doesn't already exist
+<<echo=FALSE, eval=FALSE>>=
+fit.A <- rrLogit( raceEth.noisy ~ smokStat * sex * catAge,
+   data=df, freq=Freq, pertMat=Tmat,
+   prior="DAP", priorFreqTot=7, priorAlloc=rep(1/7,7) )
+fit.A <- rrLogit(fit.A, method="NR")
+fit.B <- rrLogit( raceEth.noisy ~ smokStat * region * metro,
+   data=df, freq=Freq, pertMat=Tmat,
+   prior="DAP", priorFreqTot=7, priorAlloc=rep(1/7,7) )
+fit.B <- rrLogit(fit.B, method="NR")
+fit.B.all2way <- rrLogit( raceEth.noisy ~ smokStat*region +
+  smokStat*metro + region*metro,  data=df, freq=Freq, pertMat=Tmat,
+   prior="DAP", priorFreqTot=7, priorAlloc=rep(1/7,7) )
+fit.B.all2way <- rrLogit( fit.B.all2way, method="NR")
+save(fit.A, fit.B, fit.B.all2way, file="fitAB.rda")
+@
+<<echo=FALSE, eval=TRUE>>=
+load("fitAB.rda")
+@
+<<echo=TRUE, eval=FALSE>>=
+# fit Model A, using the same data-augmentation prior as before 
+fit.A <- rrLogit( raceEth.noisy ~ smokStat * sex * catAge,
+   data=df, freq=Freq, pertMat=Tmat,
+   prior="DAP", priorFreqTot=7, priorAlloc=rep(1/7,7) )
+@
+\vspace*{-18pt}
+\begin{Schunk}
+\begin{Soutput}
+Warning message:
+In rrLogit.formula(raceEth.noisy ~ smokStat * sex * catAge, data = df,  :
+  Procedure failed to converge by iteration 1000
+\end{Soutput}
+\end{Schunk}
+\vspace*{-18pt}
+<<echo=TRUE, eval=FALSE>>=
+# switch to Newton-Raphson for faster convergence
+fit.A <- rrLogit(fit.A, method="NR")
+# fit Model B, using the same data-augmentation prior as before 
+fit.B <- rrLogit( raceEth.noisy ~ smokStat * region * metro,
+   data=df, freq=Freq, pertMat=Tmat,
+   prior="DAP", priorFreqTot=7, priorAlloc=rep(1/7,7) )
+@
+\vspace*{-18pt}
+\begin{Schunk}
+\begin{Soutput}
+Warning message:
+In rrLogit.formula(raceEth.noisy ~ smokStat * region * metro, data = df,  :
+  Procedure failed to converge by iteration 1000
+\end{Soutput}
+\end{Schunk}
+\vspace*{-18pt}
+<<echo=TRUE, eval=FALSE>>=
+# switch to Newton-Raphson for faster convergence
+fit.B <- rrLogit(fit.B, method="NR")
+@
+
+\noindent{\bf Fitting predictive models with the saturated option.} Both of  
+these models include the full set of interactions, making them the
+richest possible models that could be fit with their respective sets of
+predictors.  In each case, we were able to fit the model successfully
+because there happened to be no zero frequencies in the table that
+cross-classifies the individuals by the predictors.
+<<>>=
+# see if there are any zeros in the full cross-classification by
+# predictors in Model A: smokStat, sex, and catAge 
+any( xtabs( Freq ~ smokStat + sex + catAge, data=df ) == 0 )
+# see if there are any zeros in the full cross-classification by
+# predictors in Model B: smokStat, region and metro
+any( xtabs( Freq ~ smokStat + region + metro, data=df ) == 0 )
+@
+If any zeros had been present, the model fitting would have failed and
+given the following error message,
+\begin{Schunk}
+\begin{Soutput}
+modelMatrix does not have full rank due to empty covariate patterns
+\end{Soutput}
+\end{Schunk}
+which implies that some of the elements of
+$\bbeta$ are inestimable. When that happens, we can apply
+the argument \texttt{saturated=TRUE}, as described in
+Section \ref{sec:modelFit}. With \texttt{saturated=TRUE},
+\texttt{rrLogit()} skips over the empty covariate patterns
+and fits an unrestricted multinomial model to each non-empty pattern,
+bypassing the model matrix and $\bbeta$ entirely. 
+<<>>=
+# fit the same models as before, but this time use the option saturated=TRUE
+fit.A.sat <- rrLogit( raceEth.noisy ~ smokStat * sex * catAge,
+   data=df, freq=Freq, pertMat=Tmat,
+   prior="DAP", priorFreqTot=7, priorAlloc=rep(1/7,7), saturated=TRUE )
+@
+\vspace*{-18pt}
+\begin{Schunk}
+\begin{Soutput}
+Warning message:
+In rrLogit.formula(raceEth.noisy ~ smokStat * sex * catAge, data = df,  :
+  Procedure failed to converge by iteration 1000
+\end{Soutput}
+\end{Schunk}
+\vspace*{-18pt}
+<<>>=
+# continue running EM to convergence
+fit.A.sat <- rrLogit( fit.A.sat )
+fit.B.sat <- rrLogit( raceEth.noisy ~ smokStat * region * metro,
+   data=df, freq=Freq, pertMat=Tmat,
+   prior="DAP", priorFreqTot=7, priorAlloc=rep(1/7,7), saturated=TRUE )
+@
+\vspace*{-18pt}
+\begin{Schunk}
+\begin{Soutput}
+Warning message:
+In rrLogit.formula(raceEth.noisy ~ smokStat * region * metro, data = df,  :
+  Procedure failed to converge by iteration 1000
+\end{Soutput}
+\end{Schunk}
+\vspace*{-18pt}
+<<>>=
+# continue running EM to convergence
+fit.B.sat <- rrLogit(fit.B.sat)
+@
+Using \texttt{saturated=TRUE} has no effect on model fit. 
+<<>>=
+# show that the models fit with saturated=TRUE achieve the same
+# loglikelihood as those fit with saturated=FALSE
+all.equal( loglik(fit.A), loglik(fit.A.sat) )
+all.equal( loglik(fit.B), loglik(fit.B.sat) )
+@
+
+\subsection{Model diagnostics with a noisy response} 
+
+\noindent {\bf Comparing the fit of alternative models.} In Section
+\ref{sec:modelFit}, we showed how to use \texttt{anova()} for model
+comparisons when the response variable has no added noise. With a
+noisy response, \texttt{anova()} works in exactly the same way. To
+illustrate, let's compare the fit of our Model B
+(\texttt{smokStat*sex*catAge}) to a reduced version that includes all
+two-way interactions but eliminates the three-way terms.
+<<echo=TRUE, eval=FALSE>>=
+# fit a reduced model that eliminates the three-way interaction
+fit.B.all2way <- rrLogit( raceEth.noisy ~ smokStat*region +
+  smokStat*metro + region*metro,  data=df, freq=Freq, pertMat=Tmat,
+  prior="DAP", priorFreqTot=7, priorAlloc=rep(1/7,7) )
+@
+\vspace*{-18pt}
+\begin{Schunk}
+\begin{Soutput}
+Warning message:
+In rrLogit.formula(raceEth.noisy ~ smokStat * region + smokStat *  :
+  Procedure failed to converge by iteration 1000
+\end{Soutput}
+\end{Schunk}
+\vspace*{-18pt}
+<<>>=
+# switch to NR for faster convergence
+fit.B.all2way <- rrLogit( fit.B.all2way, method="NR")
+# compare the fit
+anova( fit.B.all2way, fit.B.sat, pval=TRUE )
+@
+The three-way interactions add 162 parameters to the model but only decrease
+the deviance by 51.1, suggesting that these terms are unnecessary. It
+may be tempting to remove them, but in this case, that should
+be discouraged.  Collectively discarding all of these terms might omit
+some that are actually important.  The purpose of predictive modeling
+is not to find a parsimonious description of the data but to preserve
+relationships for subsequent analyses after multiple imputation.
+Noise infusion reduces the chance
+that real effects are deemed statistically significant, increasing the
+risk of Type-2 errors if the terms are trimmed away.
+As a general principle, it is wise to keep interactions in
+predictive models even when they are not statistically
+significant, because eliminating them could make it impossible to
+detect effects of interest later. 
+
+\noindent{\bf Fitted values.} With the \texttt{fitted()}
+function, we can extract fitted values for either the
+true response $Y$ (\texttt{noisy=FALSE}) or the
+noisy response $Y^*$ (\texttt{noisy=TRUE}). 
+Definitions of the various
+types of fitted values are shown in Table \ref{tab:fittedValues}.
+\begin{table}
+\caption{\label{tab:fittedValues}
+Definitions of fitted-value vectors returned by the \texttt{fitted()}
+method for a given covariate pattern $g$.}
+{\small
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+& \texttt{noisy=FALSE} & \texttt{noisy=TRUE} \\
+\midrule
+\rule{0pt}{12pt}\texttt{type="prob"} &
+$\hat{\bpi}_g \,=\, \bx_g^\top\hat{\bbeta}$ &
+$\hat{\bpi}^*_g\,=\,\bT \hat{\bpi}_g$ \\
+\rule{0pt}{12pt}\texttt{type="mean"} &
+$\hat{\bmu}_g \,=\, N_g\hat{\bpi}_g$ &
+$\hat{\bmu}^*_g \,=\, N_g\hat{\bpi}^*_g$ \\
+\rule{0pt}{12pt}\texttt{type="link"} &
+$\hat{\bfeta}_g\,=\,\bx^\top_g\hat{\bbeta}$ &
+--- \\*[2pt]
+\bottomrule
+\end{tabular}
+\end{center}}
+\end{table}
+<<>>=
+# extract fitted means for the true response (noisy=FALSE) from Model A
+fits.A <- fitted( fit.A, include.predvars=TRUE, type="mean")
+# print the first few rows
+print( head(fits.A), digits=2)
+@
+
+\noindent {\bf Residuals.} With noise infusion, the Pearson residuals are
+\begin{equation}
+R^*_{gy}\,=\,
+\frac{f^*_{gy}\,-\,\hat{\mu}^*_{gy}}{\sqrt{\hat{\mu}^*_{gy}}}.
+\label{eq:pearsonResNoisy}
+\end{equation}
+Note that these residuals are defined with respect to the noisy response
+$Y^*$. There are no analogous residuals for the true response
+variable $Y$, because the true frequencies $f_{gy}$ are
+unseen. Let's examine the Pearson residuals for Model B.
+<<>>=
+# extract residuals from Model B
+resids <- residuals( fit.B )
+# display the first few rows
+round( head(resids), digits=2)
+@
+Curiously, these residuals are not zero even though the model is
+saturated.  There are two reasons for this. One reason is that we
+applied a DAP, which gently pulls the parameters away from their ML
+estimates. The second, and more important, reason is that the ML
+estimate for this example lies on the boundary of the parameter
+space. It would be impossible for this fitted values
+$\hat{\mu}^*_{gy}$ to exactly reproduce the noisy frequencies
+$f^*_{gy}$ unless some of the $\hat{\pi}^*_{gy}$'s strayed into the
+negative range, which the fitting procedure does not allow them to do.
+
+\subsection{Measures of missing information}
+
+The EM algorithm alternates between an E-step, which predicts the true
+response frequencies from the noisy ones, and an M-step, which
+maximizes a hypothetical loglikelihood function that supposes the true
+frequencies are known. If we compare the curvature of the hypothetical
+loglikelihood being maximized within the M-step to that of the actual
+loglikelihood, we can compute diagnostics that describe the impact of
+added noise on measures of uncertainty for the model coefficients and
+predicted values. These diagnostics, which are defined in Appendix
+\ref{app:misinf}, include the fraction of missing information (FMI)
+and the width-inflation factor (WIF).
+
+To compute these diagnostics for $\bbeta$, we must extract the estimated
+``complete-data covariance matrix,'' which approximates
+the covariance matrix that would have resulted if there
+were no added noise. To do this, we call \texttt{coef()} with the options
+\texttt{covMat=TRUE} and \texttt{completeData=TRUE}.
+<<echo=TRUE, eval=FALSE>>=
+# extract the complete-data covariance matrix from Model A 
+tmp <- coef( fit.A, covMat=TRUE, completeData=TRUE )
+@
+\vspace*{-18pt}
+\begin{Schunk}
+\begin{Soutput}
+Error in coef.rrLogit(fit.A, covMat = TRUE, completeData = TRUE) :
+  completeData = TRUE may only be used when method="EM"
+\end{Soutput}
+\end{Schunk}
+\vspace*{-10pt}
+The error message appeared because we had sped the convergence of our
+model by switching
+from EM to NR. To fix the problem, we can restart the EM algorithm by
+calling \texttt{rrLogit()} again with \texttt{method="EM"}. This new run
+of EM stops after one iteration, because the procedure has already
+converged.
+<<>>=
+# restart EM, which will automatically stop after a single iteration
+fit.A <- rrLogit( fit.A, method="EM")
+# extract the complete-data covariance matrix and corresponding standard errors
+tmp <- coef( fit.A, covMat=TRUE, completeData=TRUE )
+covMatCompleteData <- tmp$covMat
+SEsCompleteData <- sqrt( diag( covMatCompleteData ) )
+# extract the actual covariance matrix and corresponding standard errors
+tmp <- coef( fit.A, covMat=TRUE )
+covMatActual <- tmp$covMat
+SEsActual <- sqrt( diag( covMatActual ) )
+@
+We now compute and summarize the WIFs, which are equal to the actual
+SEs divided by the complete-data SEs.
+<<>>=
+WIF <- SEsActual / SEsCompleteData
+summary(WIF)
+@
+Among the 336 coefficients in this model, noise infusion
+inflated the standard errors by an average factor of 4.5, with a
+minimum of 1.2 and a maximum of 10.2.
+
+The \texttt{completeData=TRUE} option can also be used with
+\texttt{predict()}, which allows us to compute WIFs for the predicted
+probabilities.
+<<>>=
+# compute WIFs for the predicted probabilities
+SEFitCompleteData <- predict(fit.A, se.fit=TRUE, completeData=TRUE)$se.fit
+SEFitActual <- predict(fit.A, se.fit=TRUE)$se.fit
+WIF <- SEFitActual / SEFitCompleteData
+FMI <- 1 - 1 / WIF^2
+@
+A boxplot of these WIFs, produced with
+<<echo=TRUE, eval=FALSE>>=
+boxplot(WIF)
+@
+and displayed in Figure \ref{fig:WIFpiHat}, shows that the impact of
+noise infusion on measures of error is lowest in categories of
+race/ethnicity that are common and highest in the categories that are rare.
+\begin{figure}
+\begin{center}
+<<echo=FALSE, fig=TRUE, height=4, width=8>>=
+boxplot(WIF)
+@
+\end{center}
+\vspace*{-18pt}\caption{Boxplots of the width-inflation factors (WIFs)
+for predicted probabilities from Model A\label{fig:WIFpiHat}}
+\end{figure}
+
+\section{Bayesian methods\label{sec:Bayesian}}
+
+\subsection{Why we need a Bayesian approach}
+
+The methods described in Section \ref{sec:withNoise} give
+reliable estimates and measures of uncertainty for parameters of the logistic
+model. In a typical application of PRAM, however, that model will be a 
+coefficients are at best only a 
+
+
+
+
+
+
+\section{Multiple imputation\label{sec:MI}}
+
+\newpage
+\bibliographystyle{apa}
+\bibliography{rrLogitBibliography}
+
+\begin{appendices}
+
+%\gdef\thesection{Appendix \Alph{section}}
+
+\section{Model fitting with no added noise\label{app:NewtonRaphson}}
+
+\noindent{\bf Grouping by covariate patterns.} Regardless of how the
+data are provided (wide format, narrow format, or
+microdata), the \texttt{rrLogit()} function processes the data prior to
+model fitting by grouping the lines of the dataset into covariate
+patterns, classifying them into groups
+$g=1,\ldots,G$ where the units  
+within a group are identical with respect to their covariate vectors
+$\bx_i$. The grouped data can be written as $(\bx_g,\beff_{\!g})$ for
+$g=1,\ldots,G$, where $\beff_g=(f_{g1},\ldots,f_{gC})^\top$, and
+$f_{gy}$ is the frequency of $Y_i=y$ within group $g$.
+Regarding the group totals $N_g=\sum_{y=1}^C$ as fixed, 
+$\beff_{\!g}$ has a multinomial distribution 
+\[
+\beff_{\!g} \, | \, \bpi_g \, \sim \,
+\mbox{Mult}(N_g,\bpi_g)
+\] 
+independently for $g=1,\ldots,G$. 
+The loglikelihood function with grouped data is $l(\bbeta) =
+\sum_{g=1}^G l_g$, where
+\begin{equation}
+l_g \, =\, \sum_{y=1}^C f_{gy}\,\log \pi_{gy}
+\label{eq:loglikWideFormat}
+\end{equation}
+is the loglikelihood contribution for group $g$.
+
+\noindent {\bf Newton-Raphson (NR).}
+One iteration of NR updates the current estimate $\hat{\bbeta}^{(t)}$ by
+\begin{equation}
+\hat{\bbeta}^{(t+1)}\,=\,
+\hat{\bbeta}^{(t)}\,+\,
+\left[-\left( \frac{\partial^2 l}{\partial\bbeta\partial\bbeta^\top}
+\right)\right]^{-1}
+\left(\frac{\partial l}{\partial\bbeta}\right),
+\label{eq:newtRaph}
+\end{equation}
+where the derivatives on the right-hand side are evaluated at
+$\bbeta=\hat{\bbeta}^{(t)}$. The first derivatives are $\partial l /
+\partial \bbeta =  
+\sum_{g=1}^G \partial l_g / \partial \bbeta$, where
+\begin{equation}
+\frac{\partial l_g}{\partial \bbeta}
+\,=\,
+\left(\frac{\partial \bpi_g}{\partial\bbeta^\top}\right)^{\!\!\top}\!\!
+\left(\frac{\partial l_g}{\partial \bpi_g}\right),
+\label{eq:chain1}
+\end{equation}
+and the second derivatives are $\partial^2 l / \partial \bbeta
+\partial \bbeta^\top = 
+\sum_{g=1}^G \partial^2 l_g / \partial \bbeta \partial \bbeta^\top$,
+where
+\begin{equation}
+\frac{\partial^2 l_g}{\partial\bbeta\partial\bbeta^\top}
+\, = \, \sum_{y=1}^C
+\left( \frac{\partial l_g}{\partial\pi_{gy}} \right)
+\left( \frac{\partial^2 \pi_{gy}}{\partial\bbeta\partial\bbeta^\top} \right)
+\,+\,
+\left( \frac{\partial\bpi_g}{\partial\bbeta^\top} \right)^{\!\!\top}\!\!
+\left( \frac{\partial^2 l_g}{\partial\bpi_g\partial\bpi_g^\top} \right)
+\left( \frac{\partial\bpi_g}{\partial\bbeta^\top} \right).
+\label{eq:chain2}
+\end{equation}
+The derivatives of $l_g$ with respect to $\bpi_g$ have
+elements $\partial l_g / \partial \pi_{gy} = f_{gy}/\pi_{gy}$ and
+\[
+\frac{\partial^2 l_g}{\partial\pi_{gy}\partial\pi_{gy^\prime}} \,=\,
+-\,\left(\frac{f_{gy}}{\pi_{gy}^2}\right)\,I(y=y^\prime),
+\]
+where $I(\cdot)$ is the indicator function equal to one if its
+argument is true and zero otherwise.
+The derivatives of $\bpi_g$ with respect to $\bbeta$ have elements
+\begin{eqnarray}
+\frac{\partial \pi_{gy}}{\partial \beta_{jk}} & = & 
+\pi_{gy}\,\left[ \,I(k=y)\,-\,\pi_{gk}\,\right]\,x_{gj},
+\label{eq:dpidbeta}\\*[6pt]
+\frac{\partial^2 \pi_{gy}}{\partial \beta_{jk}\partial\beta_{lm}} & = & 
+-\,\pi_{gy}\,
+\left\{ \rule[-5pt]{0pt}{16pt} \pi_{gk}\,
+\left[ \,I(k=m)\,-\,\pi_{gm}\, \right] \right.
+\nn\\
+& & \,\,\,-\, \left. \rule[-5pt]{0pt}{16pt} 
+\left[ \,I(k=y) \,-\, \pi_{gk}\, \right]\,
+\left[ \,I(m=y) \,-\, \pi_{gm}\, \right]\,\right\}
+\,x_{gj}\,x_{gl}.
+\label{eq:d2pidbeta2}
+\end{eqnarray}
+Plugging these expressions into (\ref{eq:chain1})--(\ref{eq:chain2})
+and simplifying, one can show that the first derivatives become
+\begin{equation}
+\frac{\partial l_g}{\partial\beta_{jk}} \,=\,
+\left(f_{gk} \,-\, N_g\pi_{gk}\right)\,x_{gj},
+\label{eq:scoreBeta}
+\end{equation}
+and the second derivatives become
+\begin{equation}
+\frac{\partial^2 l_g}{\partial\beta_{jk}\partial\beta_{lm}} \,=\,
+-\,N_g \, \pi_{gk}\, (1-\pi_{gk})\, x_{gj} \, x_{gl}
+\label{eq:hessBeta1}
+\end{equation}
+if $k=m$, and
+\begin{equation}
+\frac{\partial^2 l_g}{\partial\beta_{jk}\partial\beta_{lm}} \,=\,
+N_g\, \pi_{gk} \,\pi_{gm}\, x_{gj}\, x_{gl}
+\label{eq:hessBeta2}
+\end{equation}
+if $k\neq m$. In the
+\texttt{rrLogit()} function, convergence is judged
+not by changes in $\bbeta$, but with respect to the fitted
+probabilities; when the largest 
+absolute difference in 
+the  estimated $\pi_{gy}$'s from one iteration to the next falls below the
+control parameter \texttt{critConverge}, NR is deemed to have converged.
+
+\noindent{\bf Fisher scoring.} For statistical modeling, a popular
+alternative to NR is Fisher scoring (FS), which replaces the
+Hessian matrix $\partial^2 l/\partial\bbeta\partial\bbeta^\top$ by its
+expected value. In this case, the second 
+derivatives (\ref{eq:hessBeta1})--(\ref{eq:hessBeta2}) do not depend
+on the response frequencies $\beff_{\!g}$ (except through $N_g$,
+$g=1,\ldots,G$ which are treated as fixed), so the actual and expected
+Hessian are equal, and FS is equivalent to NR.
+
+\noindent{\bf Data augmentation prior.} When applying the
+data-augmentation prior (DAP) described in Section \ref{sec:DAP}, the
+NR procedure proceeds in the same way; the only change is that each
+$f_{gy}$ is replaced by $f_{gy}\,+\,f^\dag_{gy}$, and the function
+being maximized becomes $\log P$. 
+
+\noindent{\bf Starting values.} If starting values are not supplied by
+the user, we begin with a naive estimate for $\bbeta$ that produces
+equal fitted-probability vectors $\bpi_g$ across the covariate
+patterns $g=1,\ldots,G$. These initial fitted probabilities are set to
+the marginal proportions for $Y=1,\ldots,C$ observed in the sample.
+
+\noindent{\bf Step halving.} Netwon-Raphson is not guaranteed to
+increase the loglikelihood or $\log P$ at each step.  Depending on
+where the current parameter value is located, a full step
+of NR could propel the next value into extreme regions of the
+parameter space where some of the fitted probabilities are numerically
+zero or $\log P$ becomes $-\infty$. To stabilize the procedure,
+we apply the technique of step halving
+\citep{jennrich1976newton}. With this modification,
+(\ref{eq:newtRaph}) is  replaced by
+\begin{equation}
+\hat{\bbeta}^{(t+1)}\,=\,
+\hat{\bbeta}^{(t)}\,+\, (0.5)^{s}
+\left[-\left( \frac{\partial^2 l}{\partial\bbeta\partial\bbeta^\top}
+\right)\right]^{-1}
+\left(\frac{\partial l}{\partial\bbeta}\right),
+\label{eq:stepHalving}
+\end{equation}
+where $s$ is initially set to zero, and then increased to 1, 2, \ldots
+until the $\log P$ function at the updated parameter
+becomes at least as high as it was under the previous one.
+
+\noindent{\bf Estimated variances and standard errors.} When the NR
+procedure converges, the final value of 
+$\left[ -\partial l^2/\partial\bbeta \partial\bbeta^\top\right]^{-1}$
+is an estimated covariance matrix for $\hat{\bbeta}$. This matrix,
+which we denote by $\hat{V}(\hat{\bbeta})$, becomes the basis for
+standard errors computed by \texttt{predict()} when
+\texttt{se.fit=TRUE}. Let $r$ denote a row of the dataset under
+consideration, either the
+original one used to fit the model or a new one specified by
+\texttt{newdata}, and let $\bx_r$ denote the vector of predictors
+for that row. The vector of fitted logits is
+$\hat{\bfeta}_r\,=\,(\hat{\eta}_{r1},\ldots,\hat{\eta}_{rC})^\top$ with
+$\hat{\eta}_{ry}\,=\,\bx_r^\top\hat{\bbeta}_y\,=\,\sum_{j=1}^p
+x_{rj}\hat{\beta}_{jy}$, 
+and the estimated covariance matrix for $\hat{\bfeta}_r$ is
+\begin{equation}
+\hat{V}(\hat{\bfeta}_r)\,=\,
+\left(\frac{\partial\bfeta_r}{\partial\bbeta^\top}\right)\,
+\hat{V}(\hat{\bbeta})\,
+\left(\frac{\partial\bfeta_r}{\partial\bbeta^\top}\right)^\top,
+\label{eq:vHatEta}
+\end{equation}
+with the elements of $\partial\bfeta_r/\partial\bbeta^\top$ given by
+\[
+\frac{\partial\eta_{ry}}{\partial\beta_{jk}}\,=\,
+\left\{ \begin{array}{ll}
+x_{rj} & \mbox{if $k=y$ and $y\neq b$}, \\
+0 & \mbox{otherwise}.
+\end{array}\right.
+\]
+Applying the delta method, the estimated covariance matrix for
+$\hat{\bpi}_r\,=\,(\hat{\pi}_{r1},\ldots,\hat{\pi}_{rC})^\top$,
+$\hat{\pi}_{ry}\,=\,\exp(\hat{\eta}_{ry}) / \sum_{y^\prime = 1}^C
+\exp(\hat{\eta}_{ry^\prime})$ is
+\begin{equation}
+\hat{V}(\hat{\bpi}_r)\,=\,
+\left(\frac{\partial\bpi_r}{\partial\bbeta^\top}\right)\,
+\hat{V}(\hat{\bbeta})\,
+\left(\frac{\partial\bpi_r}{\partial\bbeta^\top}\right)^{\!\top},
+\label{eq:vHatPi}
+\end{equation}
+with the elements of $\partial\bpi_r/\partial\bbeta^\top$ given by
+$\partial\pi_{ry}/\partial\beta_{jk}\,=\,\hat{\pi}_{ry}\,
+[\,I(k=y)\,-\,\hat{\pi}_{rk}\,]\,x_{rj}$.
+
+\section{Model fitting with a noisy response\label{app:EM}}
+
+\noindent{\bf EM algorithm.} Using the notation from Section
+\ref{sec:theModel}, the loglikelihood function for modeling the
+noise-infused response is
+is $l\,=\,\sum_{g=1}^G l_g$, where
+\begin{equation}
+l_g\,=\,\sum_{y=1}^C f^*_{gy}\log\pi^*_{gy}
+\label{eq:loglikWithNoise}
+\end{equation}
+is the
+contribution from covariate pattern $g$. The default procedure
+(\texttt{method="EM"}) maximizes this function by repeatedly maximizing
+the loglikelihood for a non-noisy response (\ref{eq:loglikWideFormat}), with
+the unknown vectors of true frequencies $\beff_{g}$ replaced by predictions
+$\hat{\beff}_{g}\,=\,E(f_{gy} \,|\,\beff^*_g,\bbeta)$.
+One iteration of EM proceeds as follows.
+\begin{description}
+\item[E-step:] From the current estimate $\bbeta^{(t)}$, compute
+$\bpi_g$, $\bPhi_g$, and $\hat{\beff}_g\,=\,\bPhi^\top
+\beff^*_g$ for $g=1,\ldots, G$.
+\item[M-step:] Compute a new estimate $\bbeta^{(t+1)}$ by the
+NR procedure from \ref{app:NewtonRaphson}, replacing the unknown
+$f_{gy}$'s by their predicted values from the E-step.
+\end{description}
+Convergence is judged by examining changes in the fitted
+probabilities; the procedure halts when the maximum 
+absolute difference in the $\pi_{gy}$'s from one iteration to the next
+falls below \texttt{critConverge}, or when the number of iterations
+reaches \texttt{iterMaxEM}.
+
+\noindent{\bf EM for a saturated model.} When fitting a 
+model with \texttt{saturated=TRUE}, the E-step remains the same, and
+the M-step changes to $\hat{\bpi}_g\,=\,\hat{\beff}_g/N_g$ for $g=1,\ldots,G$.
+
+\noindent{\bf Standard errors after EM.} Standard errors are not an automatic
+byproduct of the EM algorithm. Upon convergence, we compute
+$\hat{V}(\hat{\bbeta})\,=\,[-\,\partial^2
+l/\partial\bbeta\partial\bbeta^\top]^{-1}$ using the derivative
+formulas below. When \texttt{saturated=TRUE}, coefficents are not
+defined and standard errors are omitted.
+
+\noindent{\bf Newton-Raphson.}  EM's convergence can be slow,
+especially  when the  perturbation 
+matrix  $\bT$  has high  error  rates.  If  EM  has not  converged  by
+\texttt{iterMaxEM} iterations, a user may continue with EM
+or switch to \texttt{method="NR"}.  The convergence behavior of NR in
+the vicinity of a mode is
+quadratic, compared to linear convergence for EM. If  we are  near  a
+solution, switching to NR can greatly speed up the process of getting
+there, but if we are too far from the solution, NR may fail due to
+the loglikelihood's ususual shape. For NR, we compute
+derivatives of $l_g$ with respect to $\bbeta$ and sum them for
+$g=1,\ldots,G$. Applying the chain rules
+(\ref{eq:chain1})--(\ref{eq:chain2}) to the new version of $l_g$,
+and noting that
+\[
+\frac{\partial l_g}{\partial\bpi_g}
+\,=\,
+\bT^\top \! \left( \frac{\partial l_g}{\partial\bpi_g^*} \right)
+\]
+and
+\[
+\frac{\partial^2 l_g}{\partial\bpi_g\partial\bpi_g^\top}
+\, = \,
+\bT^\top \! \left( \frac{\partial^2
+l_g}{\partial\bpi_g^*\partial\bpi_g^{*\top}} \right) \bT,
+\]
+the results are
+\begin{equation}
+\frac{\partial l_g}{\partial \bbeta}
+\,=\,
+\left(\frac{\partial
+\bpi_g}{\partial\bbeta^\top}\right)^{\!\!\top}\!\
+\!\bT^\top \!
+\left(\frac{\partial l_g}{\partial \bpi_g^*}\right)
+\end{equation}
+and
+\begin{eqnarray}
+\frac{\partial^2 l_g}{\partial\bbeta\partial\bbeta^\top}
+& = & \sum_{y=1}^C
+\left( \frac{\partial l_g}{\partial\pi_{gy}} \right)
+\left( \frac{\partial^2 \pi_{gy}}{\partial\bbeta\partial\bbeta^\top} \right)
+\label{eq:hessStarBeta1}
+\\
+& & 
+\,+\,
+\left( \frac{\partial\bpi_g}{\partial\bbeta^\top} \right)^{\!\!\top}
+\!\bT^\top \!
+\left( \frac{\partial^2 l_g}{\partial\bpi_g^*\partial\bpi_g^{*\top}}
+\right)
+\bT
+\left( \frac{\partial\bpi_g}{\partial\bbeta^\top} \right).
+\label{eq:hessStarBeta2}
+\end{eqnarray}
+The derivatives of $l_g$ with respect to $\bpi_g^*$ have elements 
+\[
+\frac{\partial l_g}{\partial \pi_{gy}^*}\,=\,
+\frac{f_{gy}^*}{\pi_{gy}^*}
+\;\;\;\mbox{and}\;\;\;
+\frac{\partial^2 l_g}{\partial\pi_{gy}^* \partial\pi_{gy^\prime}^*} \,=\,
+-\,\left( \frac{f_{gy}^*}{\pi_{gy}^{*2}}\right)\,I(y=y^\prime),
+\]
+and the derivatives of $\bpi_g$ with respect to $\bbeta$ are given by
+(\ref{eq:dpidbeta})--(\ref{eq:d2pidbeta2}).
+
+\noindent{\bf Fisher scoring.} With a noise-infused response, the
+second derivatives of $l$ are functions of the observed
+frequencies. Fisher scoring (\texttt{method="FS"}) proceeds like NR
+but replaces the second derivatives with their expected values.
+In (\ref{eq:hessStarBeta1}), $\partial l_g/\partial\pi_{gy}^*$ is
+replaced  by
+\[
+E \left( \frac{\partial l_g}{\partial \pi_{gy}^*} \right)\,=\, N_g,
+\]
+and in (\ref{eq:hessStarBeta2}), $\partial^2 l_g/\partial \pi_{gy}^*
+\partial\pi_{gy^\prime}^*$  is replaced by
+\[
+E\left( \frac{\partial^2 l_g}{\partial\pi_{gy}^*
+\partial\pi_{gy^\prime}^*} 
+\right) \,=\,
+-\,\left( \frac{N_g}{\pi_{gy}^*}\right)\,I(y=y^\prime).
+\]
+In regions of the
+parameter space where $l$ is not concave, FS occasionally succeeds
+when NR fails. If \texttt{method="FS"} reaches a solution, 
+\texttt{rrLogit()} attempts to compute an estimated covariance matrix
+$\hat{V}(\hat{\bbeta})$ based on the actual (not expected) Hessian.
+
+\noindent{\bf Starting values.} If starting values are not supplied by
+the user, default starting values are obtained by setting $\bpi_g\,=\,
+\tilde{\bpi}$ for $g=1,\ldots,G$, where $\tilde{\bpi}$ is the
+method-of-moments (MOM)
+estimate of the marginal probabilities for $Y$. If that procedure
+fails because one or more of the MOM probabilities are negative, the
+vector of uniform probabilities $(1/C,\ldots,1/C)^\top$ is used
+instead. The starting value for $\bbeta$ is then computed by converting
+$\bpi_g$ to $\bfeta_g$ and regressing each of the non-zero logits on
+$\bx_g$ using ordinary least squares.
+
+\noindent{\bf Standard errors for predictions.} When 
+\texttt{predict()} is called 
+with \texttt{noisy=FALSE}, standard errors for $\hat{\eta}_{ry}$'s
+and $\hat{\pi}_{ry}$'s for rows $r=1,\ldots,R$ of
+the dataset are computed as in
+(\ref{eq:vHatEta})--(\ref{eq:vHatPi}). When \texttt{noisy=TRUE},
+standard errors for the $\hat{\pi}^*_{ry}$'s come from
+\begin{equation}
+\hat{V}(\hat{\bpi}^*_r) \,=\, \bT
+\left(\frac{\partial\bpi_r}{\partial\bbeta^\top}\right)\,
+\hat{V}(\hat{\bbeta})\,
+\left(\frac{\partial\bpi_r}{\partial\bbeta^\top}\right)^{\!\top}\bT^\top.
+\label{eq:vHatPistar}
+\end{equation}
+
+\noindent{\bf Boundary issues and data-augmentation priors.} When
+modeling a noise-infused response, it is quite common for some of the
+fitted probabilities $\hat{\pi}_{gy}$ to approach zero, even when the
+$\hat{\pi}^*_{gy}$'s are all far from zero. When this happens, some
+estimated coefficients and their standard errors may become unstable,
+and standard errors for the smallest $\hat{\pi}_{gy}$'s become
+tiny, creating the illusion of high precision.  In
+extreme cases, the NR procedure used in the M-step of EM
+may fail because the Hessian is numerically singular. These problems
+can often be alleviated by a well chosen DAP. When
+\texttt{prior="DAP"}, the function being maximized changes from $l$ to
+\begin{equation}
+\log P\,=\, \sum_{g=1}^G \sum_{y=1}^C f^*_{gy}\log\pi^*_{gy}\,+\,
+\sum_{g=1}^G \sum_{y=1}^C f^\dag_{gy} \log\pi_{gy},
+\label{eq:logPwithNoise}
+\end{equation}
+where the $f^\dag_{gy}$'s represent imaginary prior
+observations of the true response variable $Y$ within covariate
+patterns. These frequencies are computed as
+\[
+f^\dag_{gy}\,=\,\left(\frac{N^\dag}{G}\right)\,\tilde{\pi}_y,
+\]
+where $N^\dag$ is the total number of imaginary prior observations
+from \texttt{priorFreqTot}, and
+$\tilde{\bpi}\,=\,(\tilde{\pi}_1,\ldots,\tilde{\pi}_C)^\top$ is the
+estimate of the marginal proportions of $Y=1,\ldots,Y=C$ from
+\texttt{priorAlloc}. The default value for \texttt{priorFreqTot} is
+$d=p(C-1)$, the number of free parameters in the model. If
+\texttt{priorAlloc} is not specified, then \texttt{rrLogit()} sets
+$\tilde{\bpi}$ to the MOM estimate of the marginal probabilities for
+$Y$. If any of the MOM probabilities are negative, the procedure fails
+and a warning message is given. If that happens, a reasonable
+setting for \texttt{priorAlloc} is the vector of uniform
+probabilities \texttt{rep(1/C,C)} where \texttt{C} is the number of
+response categories. Even when the MOM procedure succeeds, the default
+\texttt{priorAlloc} might not be as effective as we would
+like at pulling the solution away from the boundary, especially if
+some of the MOM probabilities are small; in that case,
+\texttt{rep(1/C,C)} may be a better choice.
+With a DAP, the E-step of the EM algorithm remains the same, and the
+M-step becomes
+\begin{description}
+\item[M-step:] Compute a new estimate $\bbeta^{(t+1)}$ by the NR
+procedure from Appendix A, with each unknown frequency $f_{gy}$
+replaced by $\hat{f}_{gy} + f^\dag_{gy}$.
+\end{description}
+When performing NR or FS with a DAP, the first and second derivatives
+of the loglikelihood are computed as before, but we need to add to
+them the first and second derivatives of the second term in
+(\ref{eq:logPwithNoise}). That penalty term has the same functional
+form as the loglikelihood for non-noisy response, and its derivatives
+are given by the formulas in \ref{app:NewtonRaphson} with the $f^\dag_{gy}$'s
+playing the role of the $f_{gy}$'s.
+
+\section{Measures of missing information\label{app:misinf}}
+For this discussion, we momentarily switch to a generic notation that
+applies to a broad set of missing-data problems. Let
+$\bX = (\bY,\bZ)$ denote a generic dataset to be modeled, where $\bY$
+is a portion of $\bX$ that is seen, and $\bZ$ is 
+a portion of $\bX$ that is hidden. We refer to 
+$\bX$ as the complete data,
+$\bY$ as the observed data, and
+$\bZ$ is the  missing data.
+Let
+$\btheta$ denote a vector of unknown parameters in a population
+model for $\bX$, a model that we assume has been correctly specified.
+Let
+\[
+L(\btheta\,|\,\bX) \,\propto \, P(\bX\,|\,\btheta)
+\]
+denote the likelihood function that conditions on the complete data,
+and let
+\[
+L(\btheta\,|\,\bY) \,\propto \, \int P(\bX\,|\,\btheta)\,d\bZ
+\]
+denote the likelihood function based on the observed data
+ignoring the missing-data mechanism. The
+relationship between these two likelihood functions is
+\[
+L(\btheta\,|\,\bX) \,= \, L(\btheta\,|\,\bY)\,
+P(\bZ\,|\,\bY,\btheta),
+\]
+where $P(\bZ\,|\,\bY,\btheta)$ is the predictive distribution of the
+missing data given the observed data.
+Taking logarithms and differentiating  twice gives
+\[
+\left[-\,\frac{\partial^2}{\partial \btheta\partial\btheta^\top}\,
+\log L(\btheta\,|\,\bX)\right] \,=\,
+\left[-\,\frac{\partial^2}{\partial \btheta\partial\btheta^\top}\,
+\log L(\btheta\,|\,\bY)\right] \,+\,
+\left[-\,\frac{\partial^2}{\partial \btheta\partial\btheta^\top}\,
+\log P(\bZ\,|\,\bY,\btheta)\right],
+\]
+or ``the complete information equals the observed information plus the
+missing information,''
+\begin{equation}
+{\cal I}_X(\btheta) \,=\,
+{\cal I}_Y(\btheta) \,+\,
+{\cal I}_{Z|Y}(\btheta).
+\label{eq:mip}
+\end{equation}
+This decomposition, originally due to
+\cite{orchard1972missing}, is commonly known as the missing
+information principle \citep{little2019statistical}.
+
+In applying this missing information principle to the \texttt{rrLogit}
+model, the true responses $Y$ play the role of missing data, the
+noisy responses $Y^*$ play the role of observed data, and the
+logistic coefficients $\bbeta$ play the role of $\btheta$.  (If $Y$
+becomes known, then $Y^*$ provides no additional information about
+$\bbeta$, so $Y$ also plays the role of complete data.)  Making
+these substitutions in (\ref{eq:mip}), rearranging terms, and
+evaluating at $\bbeta\,=\,\hat{\bbeta}$, the
+missing-information matrix becomes
+\begin{eqnarray}
+{\cal I}_{Y|Y^*}(\hat{\bbeta}) & = & {\cal I}_{Y}(\hat{\bbeta})\,-\,
+{\cal I}_{Y^*}(\hat{\bbeta}) \nn\\
+& = & 
+I\,-\,{\cal I}_{Y^*}(\hat{\bbeta})\,{\cal
+I}^{-1}_{Y}(\hat{\bbeta}).
+\label{eq:misinfmatrix}
+\end{eqnarray}
+The observed-information matrix ${\cal I}_{Y^*}(\hat{\bbeta})$ is the
+inverse of the estimated covariance matrix $\hat{V}(\hat{\bbeta})$
+returned by the \texttt{rrLogit()} function, which is computed using
+the derivative formula (\ref{eq:hessStarBeta1})--(\ref{eq:hessStarBeta2}).
+When \texttt{method="EM"}, an estimate of the inverse
+complete-information matrix ${\cal I}^{-1}_{Y}(\hat{\bbeta})$
+is available from the final M-step of the EM algorithm, which uses
+Newton-Raphson to maximize the expected complete-data loglikelihood
+function.
+The missing-information matrix (\ref{eq:misinfmatrix}) plays a key
+role in the convergence behavior of the EM algorithm. EM's rate of
+convergence is given by the largest eigenvalue of this matrix, which
+is the called the ``worst fraction of missing information''; it
+pertains to the particular linear combination of the parameters for
+which the rate of missing information is highest.
+
+For diagnostic
+purposes, it is generally more useful to examine fractions of missing
+information for individual
+parameters rather than the
+global upper bound for all possible parameters.
+Let $\hat{V}(\hat{\bbeta})\,=\,{\cal I}^{-1}_{Y^*}(\hat{\bbeta})$
+denote the usual estimated covariance matrix for $\hat{\bbeta}$, which
+can be extracted from the result of an \texttt{rrLogit()} model fit by
+calling 
+\texttt{coef( ..., covMat=TRUE)}. Let 
+$\hat{V}_{Y}(\hat{\bbeta})\,=\,{\cal I}^{-1}_{Y}(\hat{\bbeta})$ denote
+the estimated complete-data covariance matrix, which can be extracted
+by calling \texttt{coef( ..., covMat=TRUE, completeData=TRUE)}. Let
+$\beta_j$ denote an individual element of $\bbeta$. By analogy to
+(\ref{eq:misinfmatrix}), the fraction of missing information (FMI) for
+$\beta_j$ is
+\begin{equation}
+\mbox{\it FMI}(\beta_j)\,=\,
+1\,-\,\frac{ \left[ \hat{V}_Y(\hat{\bbeta}) \right]_{jj} }
+{ \rule{0pt}{16pt}\left[ \hat{V}(\hat{\bbeta}) \right]_{jj} }.
+\label{eq:fmibetaj}
+\end{equation}
+A closely related quantity is relative increase in variance (RIV),
+\begin{equation}
+\mbox{\it RIV}(\beta_j)\,=\,
+\frac{ \left[ \hat{V}(\hat{\bbeta}) \right]_{jj} }
+{ \rule{0pt}{16pt}\left[ \hat{V}_Y(\hat{\bbeta}) \right]_{jj} }
+\,=\,
+\frac{1}{\rule{0pt}{12pt}1\,-\,\mbox{\it FMI}(\beta_j)}.
+\label{eq:RIV}
+\end{equation}
+The RIV, which is greater than or equal to one, is the
+factor by which the estimated variance of $\hat{\beta}_j$ has been
+inflated because the true response $Y$ was replaced with the
+noisy version $Y^*$. For easier interpretation, 
+\cite{savalei2012obtaining} and \cite{chen2021three} recommend using
+the width inflation factor (WIF),
+\begin{equation}
+\mbox{\it WIF}(\beta_j)\,=\,
+\sqrt{\mbox{\it RIV}(\beta_j)}\,=\,
+\sqrt{\frac{1}{\rule{0pt}{12pt}1\,-\,\mbox{\it FMI}(\beta_j)}},
+\label{eq:WIF}
+\end{equation}
+which measures the inflation in standard errors and width of
+confidence intervals. Solving (\ref{eq:WIF}), we can compute FMI from
+WIF as
+\[
+\mbox{\it FMI}(\beta_j)\,=\,
+1\,-\,\frac{1}{\left[\mbox{\it WIF}(\beta_j)\right]^2}.
+\]
+
+The diagnostics (\ref{eq:fmibetaj})--(\ref{eq:WIF}) describe the
+impact of noise infusion on measures of error for logistic
+coefficients. We can also obtain analogous
+diagnostics for predicted values of the response. By calling
+\texttt{predict()} with the options \texttt{se.fit=TRUE}
+and \texttt{completeData=TRUE}, the resulting standard errors 
+will approximate the uncertainty that we would have seen without added
+noise. These standard errors are computed by the delta methos, as in
+(\ref{eq:vHatPistar}), with $\hat{V}(\hat{\bbeta})$ replaced by
+$\hat{V}_Y(\hat{\bbeta})$.
+
+Note that these missing-information diagnostics come from the
+M-step of the EM algorithm, so they are only available
+from a model that was fit with \texttt{method="EM"}. If a model was
+fit to convergence using \texttt{method="NR"}, we can apply 
+\texttt{method="EM"}, which will cause \texttt{rrLogit()} to take one
+step of EM before stopping.
+
+
+\section{Bayesian simulation and MCMC}
+
+(describe Data Augmentation (DA) and random-walk Metropolis (RWM))
+
+\end{appendices}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<echo=FALSE>>=
+options(SweaveHooks=oldSweaveHooks)
+options(width=oldWidth)
+@
+
+\end{document}

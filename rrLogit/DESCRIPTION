@@ -1,0 +1,19 @@
+Package: rrLogit
+Type: Package
+Title: Multinomial Logistic Regression with Randomized Response
+Version: 1.0.1
+Date: 2024-02-027
+Author: Joseph L. Schafer <Joseph.L.Schafer@census.gov>
+Maintainer: Joseph L. Schafer <Joseph.L.Schafer@census.gov>
+Description: Fits baseline-category logistic regression models to a
+   categorical variable that has been distorted by random noise,
+   with Bayesian procedures for generating multiple imputations of the
+   unseen noise-free variable. Accepts data in a variety of formats, and
+   includes utilities for noise infusion.
+Depends: R (>= 3.5.0)
+Imports: stats, dotCall64, coda
+Suggests: MASS
+License: GPL-3 | file LICENSE
+LazyData: yes
+NeedsCompilation: yes
+Packaged: 2022-11-08 15:09:50 UTC; schaf310

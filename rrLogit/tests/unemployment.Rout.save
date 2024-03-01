@@ -1,0 +1,531 @@
+
+R version 4.2.1 (2022-06-23 ucrt) -- "Funny-Looking Kid"
+Copyright (C) 2022 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # tests using the data from survey with randomized response published
+> # by van den Hout and van der Heijden (2007)
+> 
+> library(rrLogit)
+> 
+> # enter data in wide format
+> dfWide <- data.frame( Yes.Yes=68, Yes.No=52, No.Yes=103, No.No=189 )
+> # create perturbation matrix
+> Tmat <- matrix( c( .8, .2, .2, .8 ), 2, 2 )
+> bigT <- kronecker(Tmat, Tmat)
+> rownames(bigT) <- colnames(bigT) <- c("Yes.Yes", "Yes.No", "No.Yes", "No.No")
+> # fit intercept-only model with DAP
+> fitModeWide <- rrLogit( cbind(Yes.Yes, Yes.No, No.Yes, No.No) ~ 1,
++    data=dfWide, pertMat=bigT,
++    prior="DAP", priorFreqTot=2, priorAlloc=rep(1/4,4) )
+> summary(fitModeWide)
+cbind(Yes.Yes, Yes.No, No.Yes, No.No) ~ 1
+Saturated option: FALSE
+           Prior: DAP  
+
+                Data format: wide
+       Frequencies supplied: TRUE
+      Rows of supplied data: 1   
+   Total N in supplied data: 412 
+Distinct covariate patterns: 1   
+   Empty covariate patterns: 0   
+
+Response categories: Yes.Yes Yes.No No.Yes No.No
+  Baseline category: Yes.Yes                    
+
+Assumed perturbation matrix
+        Yes.Yes Yes.No No.Yes No.No
+Yes.Yes    0.64   0.16   0.16  0.04
+Yes.No     0.16   0.64   0.04  0.16
+No.Yes     0.16   0.04   0.64  0.16
+No.No      0.04   0.16   0.16  0.64
+
+Number of estimated parameters = 3
+            Degrees of freedom = 0
+
+Data-augmentation prior (DAP)
+Prior effective sample size = 2
+        Prior N per pattern = 2
+Proportions for allocating prior counts:
+   Yes.Yes 0.25
+    Yes.No 0.25
+    No.Yes 0.25
+     No.No 0.25
+
+Expectation-Maximization (EM) algorithm
+Starting values: default
+Converged at iteration 138
+Gradient length = 0.000006
+
+  Final logP = -524.8597
+Final loglik = -520.8335
+
+Estimated marginal probs. for true response
+Yes.Yes  Yes.No  No.Yes   No.No 
+ 0.1586  0.0162  0.1969  0.6283 
+> 
+> 
+> # enter the data in narrow format with frequencies
+> Y1.Y2 <- as.factor( 1:4 )
+> levels(Y1.Y2) <- c("Yes.Yes", "Yes.No", "No.Yes", "No.No" )
+> Freq <- c(68, 52, 103, 189)
+> dfNarrow <- data.frame( Y1.Y2, Freq )
+> # fit the intercept-only model using the same DAP as before
+> fitModeNarrow <- rrLogit( Y1.Y2 ~ 1, data=dfNarrow, freq=Freq, pertMat=bigT,
++    prior="DAP", priorFreqTot=2, priorAlloc=rep(1/4, 4) )
+> summary(fitModeNarrow)
+Y1.Y2 ~ 1
+Saturated option: FALSE
+           Prior: DAP  
+
+                Data format: narrow
+       Frequencies supplied: TRUE  
+      Rows of supplied data: 4     
+   Total N in supplied data: 412   
+Distinct covariate patterns: 1     
+   Empty covariate patterns: 0     
+
+Response categories: Yes.Yes Yes.No No.Yes No.No
+  Baseline category: Yes.Yes                    
+
+Assumed perturbation matrix
+        Yes.Yes Yes.No No.Yes No.No
+Yes.Yes    0.64   0.16   0.16  0.04
+Yes.No     0.16   0.64   0.04  0.16
+No.Yes     0.16   0.04   0.64  0.16
+No.No      0.04   0.16   0.16  0.64
+
+Number of estimated parameters = 3
+            Degrees of freedom = 0
+
+Data-augmentation prior (DAP)
+Prior effective sample size = 2
+        Prior N per pattern = 2
+Proportions for allocating prior counts:
+   Yes.Yes 0.25
+    Yes.No 0.25
+    No.Yes 0.25
+     No.No 0.25
+
+Expectation-Maximization (EM) algorithm
+Starting values: default
+Converged at iteration 138
+Gradient length = 0.000006
+
+  Final logP = -524.8597
+Final loglik = -520.8335
+
+Estimated marginal probs. for true response
+Yes.Yes  Yes.No  No.Yes   No.No 
+ 0.1586  0.0162  0.1969  0.6283 
+> 
+> # check for equality of coefficients, fitted values, and residuals
+> all.equal( coef(fitModeWide), coef(fitModeNarrow) )
+[1] TRUE
+> all.equal( fitted(fitModeWide), fitted(fitModeNarrow) )
+[1] TRUE
+> all.equal( residuals(fitModeWide), residuals(fitModeNarrow) )
+[1] TRUE
+> 
+> # run saturated model on Wide data
+> fitModeWideSat <- rrLogit( cbind(Yes.Yes, Yes.No, No.Yes, No.No) ~ 1,
++    data=dfWide, pertMat=bigT,
++    prior="DAP", priorFreqTot=2, priorAlloc=rep(1/4,4),
++    saturated=TRUE )
+>    summary(fitModeWideSat)
+cbind(Yes.Yes, Yes.No, No.Yes, No.No) ~ 1
+Saturated option: TRUE
+           Prior: DAP 
+
+                Data format: wide
+       Frequencies supplied: TRUE
+      Rows of supplied data: 1   
+   Total N in supplied data: 412 
+Distinct covariate patterns: 1   
+   Empty covariate patterns: 0   
+
+Response categories: Yes.Yes Yes.No No.Yes No.No
+  Baseline category: Yes.Yes                    
+
+Assumed perturbation matrix
+        Yes.Yes Yes.No No.Yes No.No
+Yes.Yes    0.64   0.16   0.16  0.04
+Yes.No     0.16   0.64   0.04  0.16
+No.Yes     0.16   0.04   0.64  0.16
+No.No      0.04   0.16   0.16  0.64
+
+Number of estimated parameters = 3
+            Degrees of freedom = 0
+
+Data-augmentation prior (DAP)
+Prior effective sample size = 2
+        Prior N per pattern = 2
+Proportions for allocating prior counts:
+   Yes.Yes 0.25
+    Yes.No 0.25
+    No.Yes 0.25
+     No.No 0.25
+
+Expectation-Maximization (EM) algorithm
+Starting values: default
+Converged at iteration 138
+
+  Final logP = -524.8597
+Final loglik = -520.8335
+
+Estimated marginal probs. for true response
+Yes.Yes  Yes.No  No.Yes   No.No 
+ 0.1586  0.0162  0.1969  0.6283 
+> all.equal( fitted(fitModeWide), fitted(fitModeWideSat) )
+[1] TRUE
+> all.equal( residuals(fitModeWide), residuals(fitModeWideSat) )
+[1] TRUE
+> 
+> # run saturated model on narrow data
+> fitModeNarrowSat <- rrLogit( Y1.Y2 ~ 1, data=dfNarrow, freq=Freq, pertMat=bigT,
++    prior="DAP", priorFreqTot=2, priorAlloc=rep(1/4, 4),
++    saturated=TRUE )
+> all.equal( fitted(fitModeWide), fitted(fitModeNarrowSat) )
+[1] TRUE
+> all.equal( residuals(fitModeWide), residuals(fitModeNarrowSat) )
+[1] TRUE
+> 
+> # run MCMC on wide data, producing ten imputations
+> set.seed(5812)
+> fitMCMCWide <- rrLogit(fitModeWide, method="MCMC",
++    control=list( tuneRWM=c(100,1), imputeEvery=500))
+> summary(fitMCMCWide)
+cbind(Yes.Yes, Yes.No, No.Yes, No.No) ~ 1
+Saturated option: FALSE
+           Prior: DAP  
+
+                Data format: wide
+       Frequencies supplied: TRUE
+      Rows of supplied data: 1   
+   Total N in supplied data: 412 
+Distinct covariate patterns: 1   
+   Empty covariate patterns: 0   
+
+Response categories: Yes.Yes Yes.No No.Yes No.No
+  Baseline category: Yes.Yes                    
+
+Assumed perturbation matrix
+        Yes.Yes Yes.No No.Yes No.No
+Yes.Yes    0.64   0.16   0.16  0.04
+Yes.No     0.16   0.64   0.04  0.16
+No.Yes     0.16   0.04   0.64  0.16
+No.No      0.04   0.16   0.16  0.64
+
+Number of estimated parameters = 3
+            Degrees of freedom = 0
+
+Data-augmentation prior (DAP)
+Prior effective sample size = 2
+        Prior N per pattern = 2
+Proportions for allocating prior counts:
+   Yes.Yes 0.25
+    Yes.No 0.25
+    No.Yes 0.25
+     No.No 0.25
+
+MCMC: Random-walk Metropolis
+
+Tuning parameters:
+ proposal df = 100
+scale factor = 1  
+ stuck limit = 25 
+
+Accept rate = 0.4818
+
+              Iterations performed = 5000
+   Iterations discarded as burn-in =    0
+          Iterations after burn-in = 5000
+Thinning interval for saved series =    1
+           Samples in saved series = 5000
+               Imputation interval =  500
+      Number of imputations stored =   10
+
+Marginal probs. for true response estimated from 5000 MCMC samples
+Yes.Yes  Yes.No  No.Yes   No.No 
+ 0.1580  0.0128  0.1906  0.6386 
+> impList(fitMCMCWide)
+[[1]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     50      30     107     225 
+
+[[2]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     71       0      75     266 
+
+[[3]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     79       9      72     252 
+
+[[4]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     68       0      60     284 
+
+[[5]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     75      16      79     242 
+
+[[6]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     74       2     104     232 
+
+[[7]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     74       1      48     289 
+
+[[8]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     50      16      91     255 
+
+[[9]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     76       8      68     260 
+
+[[10]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     69       5      92     246 
+
+> 
+> # run MCMC on narrow data, producing ten imputations
+> set.seed(2231)
+> fitMCMCNarrow <- rrLogit(fitModeNarrow, method="MCMC",
++    control=list( tuneRWM=c(100,1), imputeEvery=500))
+> summary(fitMCMCNarrow)
+Y1.Y2 ~ 1
+Saturated option: FALSE
+           Prior: DAP  
+
+                Data format: narrow
+       Frequencies supplied: TRUE  
+      Rows of supplied data: 4     
+   Total N in supplied data: 412   
+Distinct covariate patterns: 1     
+   Empty covariate patterns: 0     
+
+Response categories: Yes.Yes Yes.No No.Yes No.No
+  Baseline category: Yes.Yes                    
+
+Assumed perturbation matrix
+        Yes.Yes Yes.No No.Yes No.No
+Yes.Yes    0.64   0.16   0.16  0.04
+Yes.No     0.16   0.64   0.04  0.16
+No.Yes     0.16   0.04   0.64  0.16
+No.No      0.04   0.16   0.16  0.64
+
+Number of estimated parameters = 3
+            Degrees of freedom = 0
+
+Data-augmentation prior (DAP)
+Prior effective sample size = 2
+        Prior N per pattern = 2
+Proportions for allocating prior counts:
+   Yes.Yes 0.25
+    Yes.No 0.25
+    No.Yes 0.25
+     No.No 0.25
+
+MCMC: Random-walk Metropolis
+
+Tuning parameters:
+ proposal df = 100
+scale factor = 1  
+ stuck limit = 25 
+
+Accept rate = 0.482
+
+              Iterations performed = 5000
+   Iterations discarded as burn-in =    0
+          Iterations after burn-in = 5000
+Thinning interval for saved series =    1
+           Samples in saved series = 5000
+               Imputation interval =  500
+      Number of imputations stored =   10
+
+Marginal probs. for true response estimated from 5000 MCMC samples
+Yes.Yes  Yes.No  No.Yes   No.No 
+ 0.1569  0.0125  0.1953  0.6354 
+> impList(fitMCMCNarrow)
+[[1]]
+  Yes.Yes Yes.No No.Yes No.No
+1      35      0     13    20
+2       7      0      3    42
+3       6      0     52    45
+4       2      0      5   182
+
+[[2]]
+  Yes.Yes Yes.No No.Yes No.No
+1      46      0     12    10
+2      11      0      8    33
+3      17      0     46    40
+4       3      0     19   167
+
+[[3]]
+  Yes.Yes Yes.No No.Yes No.No
+1      39      0     11    18
+2      12      3      3    34
+3      13      0     37    53
+4       5      1      8   175
+
+[[4]]
+  Yes.Yes Yes.No No.Yes No.No
+1      38      1     14    15
+2      12      4      1    35
+3      12      0     54    37
+4       4      1     15   169
+
+[[5]]
+  Yes.Yes Yes.No No.Yes No.No
+1      42      1     14    11
+2      13      1      5    33
+3      13      0     42    48
+4       2      0      5   182
+
+[[6]]
+  Yes.Yes Yes.No No.Yes No.No
+1      47      0     10    11
+2      11      3      4    34
+3      11      0     52    40
+4       4      1     15   169
+
+[[7]]
+  Yes.Yes Yes.No No.Yes No.No
+1      43      0     14    11
+2       6      0      2    44
+3       8      0     51    44
+4       2      0     19   168
+
+[[8]]
+  Yes.Yes Yes.No No.Yes No.No
+1      33      1     14    20
+2       7      2      5    38
+3      10      0     52    41
+4       2      2      9   176
+
+[[9]]
+  Yes.Yes Yes.No No.Yes No.No
+1      48      3      4    13
+2       7      2      1    42
+3      16      0     37    50
+4       3      2      9   175
+
+[[10]]
+  Yes.Yes Yes.No No.Yes No.No
+1      46      0     13     9
+2      16      0      3    33
+3      11      0     46    46
+4       3      0     11   175
+
+> 
+> # run MCMC on wide data, saturated model
+> set.seed(598)
+> fitMCMCWideSat <- rrLogit(fitModeWideSat, method="MCMC",
++    control=list( tuneRWM=c(100,1), imputeEvery=500) )
+> summary(fitMCMCWideSat)
+cbind(Yes.Yes, Yes.No, No.Yes, No.No) ~ 1
+Saturated option: TRUE
+           Prior: DAP 
+
+                Data format: wide
+       Frequencies supplied: TRUE
+      Rows of supplied data: 1   
+   Total N in supplied data: 412 
+Distinct covariate patterns: 1   
+   Empty covariate patterns: 0   
+
+Response categories: Yes.Yes Yes.No No.Yes No.No
+  Baseline category: Yes.Yes                    
+
+Assumed perturbation matrix
+        Yes.Yes Yes.No No.Yes No.No
+Yes.Yes    0.64   0.16   0.16  0.04
+Yes.No     0.16   0.64   0.04  0.16
+No.Yes     0.16   0.04   0.64  0.16
+No.No      0.04   0.16   0.16  0.64
+
+Number of estimated parameters = 3
+            Degrees of freedom = 0
+
+Data-augmentation prior (DAP)
+Prior effective sample size = 2
+        Prior N per pattern = 2
+Proportions for allocating prior counts:
+   Yes.Yes 0.25
+    Yes.No 0.25
+    No.Yes 0.25
+     No.No 0.25
+
+MCMC: Data augmentation (DA) for saturated model
+              Iterations performed = 5000
+   Iterations discarded as burn-in =    0
+          Iterations after burn-in = 5000
+Thinning interval for saved series =    1
+           Samples in saved series = 5000
+               Imputation interval =  500
+      Number of imputations stored =   10
+
+Marginal probs. for true response estimated from 5000 MCMC samples
+Yes.Yes  Yes.No  No.Yes   No.No 
+ 0.1545  0.0301  0.2039  0.6115 
+> impList(fitMCMCWideSat)
+[[1]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     60      17      71     264 
+
+[[2]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     50      10      70     282 
+
+[[3]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     83       4      66     259 
+
+[[4]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     66       6     102     238 
+
+[[5]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     62       4      88     258 
+
+[[6]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     65      11      96     240 
+
+[[7]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     44      10      92     266 
+
+[[8]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     59      11      83     259 
+
+[[9]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     44      13     105     250 
+
+[[10]]
+Yes.Yes  Yes.No  No.Yes   No.No 
+     79       0      67     266 
+
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+   0.15    0.04    0.20 

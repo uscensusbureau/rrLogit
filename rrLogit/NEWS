@@ -1,0 +1,67 @@
+rrLogit News
+
+CHANGES IN version 0.9.0
+
+   * got started
+
+CHANGES IN version 0.9.1
+
+   * added predict and impute functions
+   * added method="MCMC" and method="approxBayes" to rrLogit
+   * added several more functions to extract information from an rrLogit object
+   
+
+CHANGES IN version 0.9.2
+   * no different from version 0.9.1; change in version number wasn't necessary
+
+CHANGES IN version 0.9.5
+   * replaced .Fortran with .Call, which now allows us to pass arrays with
+   total length exceeding 2^31-1 elements. Each array dimension, however,
+   must be no longer than 2^31-1 or 2.147 billion.
+
+CHANGES IN version 0.9.6
+   * replaced .Call with .C64 from dotCall64
+
+CHANGES IN version 0.9.7
+   * no longer depends on matrixcalc package
+   * rrLogit(): changed boundary warning to note when
+   saturated=FALSE, removed it when saturated=TRUE
+   * rrLogit(): solved problem in checking for singular perturbation
+   matrix by changing from is.singular.matrix() to qr()$rank
+   * coef.rrLogit(): removed warning when saturated=TRUE
+   * anova.rlogit(): replaced resid.df column with nParams when
+   method="lrt" or "logP"; fixed problem with method="BIC"
+   * fitted.rrLogit(): fixed bug that threw an error when noisy=TRUE
+   * fitted.rrLogit() and residuals.rrLogit(): added the arguments
+   include.predvars and digits
+   * revised man pages for cig2019, rrPertMat, rrPerturbResponse,
+   fitted.rrLogit, residuals.rrLogit
+   * impute.rrLogit(): warning about no frequencies changed to a
+   message; fixed problem with microdata levels
+   * rrLogit(): fixed incorrect SIGNATURE producing error in impList()
+   * impList: fixed problem with microdata levels
+   
+CHANGES IN version 0.9.8
+   * print.miInference: removed extraneous stop()
+
+CHANGES IN version 0.9.9
+   * predict.rrLogit: fixed problem with standard errors when noisy=TRUE
+
+CHANGES IN version 1.0.0
+   * rrLogit(): implemented step-halving for Newton-Raphson, Fisher scoring
+   and the M-step of EM
+   * rrLogit(): fixed problem with saturated=TRUE; when the RHS of provided
+   model formula has extraneous interactions, it is replaced by a
+   main-effects-only formulation. For example, Y ~ X1 + X2*X3 is
+   replaced by Y ~ X1 + X2 + X3
+   * impute.rrLogit: result is now a data frame, rather than a vector or
+   matrix. When newdata is supplied, the variables in newdata appear in
+   the result, and the suffix ".imp" is added to the name of the imputed
+   true response to distinguish it from the observed noise-infused response
+   * revised man pages and test suite
+   
+CHANGES IN version 1.0.1
+   * rrLogit.formula: fixed problem with intercept-only model when
+     saturated=TRUE
+   * print.summary.rrLogit: added printed summaries for method="MCMC"
+   * added new file unemployment.R to tests
